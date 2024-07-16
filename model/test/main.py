@@ -10,17 +10,6 @@ import numpy as np
 import copy
 
 
-
-def end_effector_position(model):
-    position = copy.deepcopy(model.body('link_base').pos)
-    position += model.body('link1').pos
-    position += model.body('link2').pos
-    position += model.body('link3').pos
-    position += model.body('link4').pos
-    position += model.body('link5').pos
-    position += model.body('link6').pos
-    return position
-
 lite6 = rtb.models.Lite6()
 lite6.base = SE3(4, 0, 0.0)*SE3.Rz(pi/2)
 
@@ -39,7 +28,6 @@ model.body('link_base').quat = [1, 0, 0, 1]
 # print(model.body('link6').ipos)
 # print(model.body('link6').pos)
 
-# print(end_effector_position(model))
 
 print(dir(data.actuator))
 
@@ -74,14 +62,9 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         
           # data.ctrl['joint1'] = 1
 
-        # data.joint("joint1").qpos = i/100
-        # # data.joint("joint2").qpos = i/100
-        # # data.joint("joint3").qpos = i/100
-        # # data.joint("joint4").qpos = i/100
-        # # data.joint("joint5").qpos = i/100
-        # # data.joint("joint6").qpos = i/100
-        # print(data.body('link6').pos)
         data.ctrl = [0, 0, 0, 0, 0, 0, 10]
+
+        # print(data.body('link6').xpos)  # position of end effector
 
         mujoco.mj_step(model, data)
         viewer.sync()
