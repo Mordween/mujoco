@@ -81,7 +81,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         # # data.joint("joint5").qpos = i/100
         # # data.joint("joint6").qpos = i/100
         # print(data.body('link6').pos)
-        # data.ctrl = [0, 0, 0, 0, 0, 0, 0]
+        data.ctrl = [0, 0, 0, 0, 0, 0, 10]
 
         mujoco.mj_step(model, data)
         viewer.sync()

@@ -4,7 +4,7 @@
   <option integrator="implicitfast"/>
 
   <default>
-    <default class="lite6">
+    <default class="lite6" >
       <geom type="mesh"/>
       <joint axis="0 0 1" damping="1" armature="0.1"/>
       <general gaintype="fixed" biastype="affine" gainprm="2000" biasprm="0 -2000 -200"/>
