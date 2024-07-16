@@ -1,0 +1,68 @@
+<mujoco model="Brickiebot">
+  <compiler meshdir="assets"/>
+  <include file="scene.xml"/>
+  <include file="assets/ufactory_lite6/lite6V2.xml"/>
+
+  <option timestep="0.001" jacobian="dense"/>
+  <size nconmax="500" njmax="1500" nkey="1"/>
+
+  <default>
+    <geom solref="1e-2 5" solimp=".5 .99 1e-3" friction=".5"/>
+  </default>
+
+    <asset>
+      <mesh name="shaft"        scale="0.005 0.005 0.005" file="shaft2.stl"/>
+      <mesh name="crane_body"   scale="0.001 0.001 0.001" file="crane_body.stl"/>
+      <mesh name="brick"        scale="0.001 0.001 0.001" file="brick.stl"/>
+      <mesh name="end_effector" scale="0.001 0.001 0.001" file="end_effector.stl"/>
+      <mesh name="rails"        scale="0.001 0.001 0.001" file="rails.stl"/>
+    </asset>
+
+
+  <worldbody>
+    <light pos=".5 0 2"/>
+
+    <body name="crane_body" pos="0 0 0">
+      <geom type="mesh" mesh="crane_body"/>
+    </body>
+
+    <body name="brick" pos="0.2 0.3 0.016">
+      <geom type="mesh" mesh="brick"/>
+    </body>
+
+    <body name="end_effector" pos="0 0 0">
+      <geom type="mesh" mesh="end_effector"/>
+    </body>
+
+    <body name="rails" pos="0 0 0">
+      <geom type="mesh" mesh="rails"/>
+    </body>
+
+    <body name="beam" pos="0 0 0.3785" quat="0 1 0 1">
+        <body name="slider" pos="0 0 0">
+            <geom type="cylinder" density="100" size=".015 .005 .015" rgba="0 1 0 1" mass="10"/>
+            <body name="rope" pos="0 0 0"  quat="0 0 1 1">
+                <composite type="cable" count="50 1 1" curve="s 0 0" offset="0 0 0" prefix="rope" initial="ball" size="0.35 1 1">
+                    <joint kind="main" damping="0.01" armature="0.001"/>
+                    <geom type="capsule" size=".0005 .001 0.3" rgba=".8 .2 .1 1"/>
+                </composite>
+            </body>
+            <geom type="cylinder" density="100" size=".02 .0025 .02" pos="0 0 0.0075" rgba="0 1 0 1" mass="10"/>
+            <geom type="cylinder" density="100" size=".02 .0025 .02" pos="0 0 -0.0075" rgba="0 1 0 1" mass="10"/>
+            <joint name="shaft" type="hinge" axis="0 0 1" pos="0 0 0" damping="1"/>
+        </body>
+    </body> 
+
+  </worldbody>
+
+
+  <equality>
+    <weld body1="beam" body2="ropeB_last" active="true" anchor="0 0 0" torquescale="0"/>
+  </equality>
+
+  <actuator>
+    <position joint="shaft" />  <!-- ctrllimited="true" ctrlrange="-20 20" -->
+  </actuator>
+
+</mujoco>  
+

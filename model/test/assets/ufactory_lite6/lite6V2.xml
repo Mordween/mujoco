@@ -1,0 +1,100 @@
+<mujoco model="ufactory_lite6">
+  <!-- <compiler angle="radian" meshdir="assets" autolimits="true"/> -->
+
+  <option integrator="implicitfast"/>
+
+  <default>
+    <default class="lite6">
+      <geom type="mesh"/>
+      <joint axis="0 0 1" damping="1" armature="0.1"/>
+      <general gaintype="fixed" biastype="affine" gainprm="2000" biasprm="0 -2000 -200"/>
+      <default class="size1">
+        <general forcerange="-50 50"/>
+      </default>
+      <default class="size2">
+        <general forcerange="-32 32"/>
+      </default>
+      <default class="size3">
+        <general forcerange="-20 20"/>
+      </default>
+      <default class="visual">
+        <geom contype="0" conaffinity="0" group="2" material="white"/>
+      </default>
+      <default class="collision">
+        <geom group="3" mass="0" density="0"/>
+      </default>
+      <site size="0.001" rgba="0.5 0.5 0.5 0.3" group="4"/>
+    </default>
+  </default>
+
+  <asset>
+    <material name="white" rgba="1 1 1 1"/>
+    <material name="silver" rgba=".753 .753 .753 1"/>
+
+    <mesh file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/visual/link_base.stl"/>
+    <mesh file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/visual/link1.stl"/>
+    <mesh file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/visual/link2.stl"/>
+    <mesh file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/visual/link3.stl"/>
+    <mesh file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/visual/link4.stl"/>
+    <mesh file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/visual/link5.stl"/>
+    <mesh file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/visual/link6.stl"/>
+    <mesh name="link_base_c"  file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/collision/link_base.stl"/>
+    <mesh name="link1_c"      file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/collision/link1.stl"/>
+    <mesh name="link2_c"      file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/collision/link2.stl"/>
+    <mesh name="link3_c"      file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/collision/link3.stl"/>
+    <mesh name="link4_c"      file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/collision/link4.stl"/>
+    <mesh name="link5_c"      file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/collision/link5.stl"/>
+    <mesh name="link6_c"      file="/home/fari/Documents/mujoco-3.1.6/model/test/assets/ufactory_lite6/assets/collision/link6.stl"/>
+  </asset>
+
+  <worldbody>
+    <body name="link_base">
+      <geom class="visual" mesh="link_base"/>
+      <geom class="collision" mesh="link_base_c"/>
+      <body name="link1" pos="0 0 0.2435">
+        <joint name="joint1" range="-6.28319 6.28319"/>
+        <geom class="visual" mesh="link1"/>
+        <geom class="collision" mesh="link1_c"/>
+        <body name="link2" quat="-1 1 1 1">
+          <joint name="joint2" range="-2.61799 2.61799"/>
+          <geom class="visual" mesh="link2"/>
+          <geom class="collision" mesh="link2_c"/>
+          <body name="link3" pos="0.2002 0 0" quat="-2.59734e-06 -0.707105 -0.707108 -2.59735e-06">
+            <joint name="joint3" range="-0.061087 5.23599"/>
+            <geom class="visual" mesh="link3"/>
+            <geom class="collision" mesh="link3_c"/>
+            <body name="link4" pos="0.087 -0.22761 0" quat="0.707105 0.707108 0 0">
+              <joint name="joint4" range="-6.28319 6.28319"/>
+              <geom class="visual" mesh="link4"/>
+              <geom class="collision" mesh="link4_c"/>
+              <body name="link5" quat="1 1 0 0">
+                <joint name="joint5" range="-2.1642 2.1642"/>
+                <geom class="visual" mesh="link5"/>
+                <geom class="collision" mesh="link5_c"/>
+                <body name="link6" pos="0 0.0625 0" quat="1 -1 0 0">
+                  <joint name="joint6" range="-6.28319 6.28319"/>
+                  <geom class="visual" mesh="link6" material="silver"/>
+                  <geom class="collision" mesh="link6_c"/>
+                  <site name="attachment_site"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <general joint="joint1" ctrllimited="true" ctrlrange="-6.28319 6.28319" />  <!-- kp="20" kv="0" -->
+    <general joint="joint2" ctrllimited="true" ctrlrange="-2.61799 2.61799" />
+    <general joint="joint3" ctrllimited="true" ctrlrange="-0.061087 5.23599" />
+    <general joint="joint4" ctrllimited="true" ctrlrange="-6.28319 6.28319" />
+    <general joint="joint5" ctrllimited="true" ctrlrange="-2.1642 2.1642" />
+    <general joint="joint6" ctrllimited="true" ctrlrange="-6.28319 6.28319" />
+  </actuator>
+
+  <!-- <keyframe>
+    <key name="home" qpos="0 0 1.57 0 1.57 0" ctrl="0 0 1.57 0 1.57 0"/>
+  </keyframe> -->
+</mujoco>

@@ -1,0 +1,4 @@
+<mujoco model="uflite_gripper">
+  <compiler angle="radian"/>
+  <worldbody/>
+</mujoco>

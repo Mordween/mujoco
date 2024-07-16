@@ -1,0 +1,62 @@
+<mujoco model="Rope">
+    <include file="scene.xml"/>
+
+  <option timestep="0.001" jacobian="dense"/>
+  <size nconmax="500" njmax="1500" nkey="1"/>
+  <default>
+    <geom solref="1e-2 5" solimp=".5 .99 1e-3" friction=".5"/>
+  </default>
+  <worldbody>
+    <light pos=".5 0 2"/>
+    <!-- <geom type="box" pos="0 0 -1" size="10 10 0.03" rgba="1 1 1 1"/> -->
+    <body name="payload" pos="0 0 0.2">
+        <geom type="box" size=".05 .05 .05" rgba=".5 .2 .8 1" mass="10"/>
+        <freejoint/>
+        <composite prefix="rope" type="cable" curve="0 0 s" count="50" initial="none">
+        <pin coord="0"/>
+        <joint kind="main" damping=".015"/>
+        <geom type="capsule" size=".0015" rgba=".8 .2 .1 1" condim="1"/>
+        </composite>
+    </body>
+    <body name="beam" pos="0 0 1.2">
+        <geom type="box" size=".45 .0375 .0375" mass="10"/>
+        <body name="slider" pos="0 0 .05">
+        <geom type="box" size=".01 .02 .01" rgba="0 1 0 1" mass="10"/>
+        <joint name="jslider" type="slide" axis="1 0 0" damping=".1" limited="true" range="-.25 .25"/>
+        <!-- <joint name="jslider2" type="slide" axis="0 1 0" damping=".1" limited="true" range="-.25 .25"/> -->
+        </body>
+    </body>
+  </worldbody>
+  <!-- <equality>
+    <connect body1="weight" body2="CB0" anchor="-.05 0 0" solref="-10000 -1000"/>
+  </equality>
+   <contact>
+    <exclude body1="weight" body2="CB0"/>
+  </contact>
+
+  <equality>
+    <connect body1="DB0" body2="pulley" anchor="-.05 0 0" solref="-10000 -1000"/>
+  </equality>
+   <contact>
+    <exclude body1="DB0" body2="pulley"/>
+  </contact>
+  <actuator>
+    <motor name="motor" joint="pin" gear="1" ctrllimited="true" ctrlrange="-3 3"/>
+  </actuator> -->
+
+  <equality>
+    <connect name="connection1" body1="ropeB_last" body2="slider" anchor="0 0 0.1"/>
+  </equality>
+   <contact>
+    <exclude body1="ropeB_first" body2="slider"/>
+    <exclude body1="payload" body2="beam"/>
+  </contact>
+
+  <actuator>
+    <!-- <velocity name="slider" joint="jslider"/> -->
+    <position name="slider" joint="jslider"/>
+    <!-- <position name="slider" joint="jslider2"/> -->
+  </actuator>
+
+</mujoco>  
+
