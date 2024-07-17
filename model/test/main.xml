@@ -1,9 +1,8 @@
 <mujoco model="Brickiebot">
 
-  <compiler meshdir="assets"/>
+  <!-- <compiler meshdir="assets"/> -->
   <include file="scene.xml"/>
-  <include file="assets/ufactory_lite6/lite6.xml"/>
-
+  <include file="assets/assets/ufactory_lite6/lite6.xml"/>
   <option timestep="0.001" jacobian="dense"/>
   <size nconmax="500" njmax="1500" nkey="1"/>
 
