@@ -1,0 +1,56 @@
+<mujoco model="Brickiebot">
+
+  <compiler meshdir="assets"/>
+  <include file="scene.xml"/>
+
+  <option timestep="0.001" jacobian="dense"/>
+  <size nconmax="500" njmax="1500" nkey="1"/>
+
+  <default>
+    <geom solref="1e-2 5" solimp=".5 .99 1e-3" friction=".5"/>
+  </default>
+
+  <worldbody>
+    <light pos=".5 0 2"/>
+
+<!-- ############################################### TENDON TYPE HERE ############################################## -->
+
+  <body name="beam" pos="0 0 0.3785" quat="0 1 0 1">
+      <body name="slider" pos="0 0 0">
+        <geom type="cylinder" density="100" size=".015 .005 .015" rgba="0 1 0 1" mass="10"/>
+        <geom type="cylinder" density="100" size=".02 .0025 .02" pos="0 0 0.0075" rgba="0 1 0 1" mass="10"/>
+        <geom type="cylinder" density="100" size=".02 .0025 .02" pos="0 0 -0.0075" rgba="0 1 0 1" mass="10"/>
+      </body>
+    </body> 
+
+    <body name="moving_bax" pos="0 0.015 0.41" quat="0 1 0 1">
+      <geom type="box" size=".001 .001 .001" rgba=".5 .2 .8 1" mass="10"/>
+      <site name="cable_up" pos="0 0 -0.0005" size="0.003" rgba="1 0 0 1"/>
+      <joint name="slider" type="slide" axis="0 1 0" pos="0 0 0" damping="1"/>
+    </body> 
+    
+
+    <body name="payload" pos="0 0.015 0.05">
+      <geom type="box" size=".015 .02 0.01" rgba=".5 .2 .8 1" mass="1"/>
+      <freejoint/>
+       <geom type="cylinder" size=".001 .001" density="100"  rgba=".5 .2 .2 .5"/>
+      <site name="cable_down" pos="0 0 0.01" size="0.003" rgba="1 0 0 1"/>
+    </body>
+
+  </worldbody>
+
+
+  <tendon>
+    <spatial name="tendon_cable" limited="true" width=".001" springlength="0.5" range="0 0.2" solimplimit="0.001 0.001 0.001 0.5 1" solreflimit="-100 -0" damping="50">
+      <site site="cable_up"/>
+      <site site="cable_down"/>
+    </spatial>
+  </tendon>
+
+
+  <actuator>
+    <position joint="slider" ctrllimited="true" ctrlrange="-1 1"/> 
+  </actuator>
+
+</mujoco>  
+
