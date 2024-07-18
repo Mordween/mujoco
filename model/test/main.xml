@@ -42,11 +42,6 @@
         <!-- <geom class="collision1" mesh="brick"/> -->
       </body>
 
-      <body name="brick" pos="0.2 0.3 0.016">
-        <geom class="visual1" mesh="brick"/>
-        <!-- <geom class="collision1" mesh="brick"/> -->
-      </body>
-
       <body name="end_effector" pos="0 0 0">
         <geom class="visual1" mesh="end_effector"/>
         <!-- <geom class="collision1" mesh="brick"/> -->
@@ -56,6 +51,11 @@
         <geom class="visual1" mesh="rails"/>
         <!-- <geom class="collision1" mesh="brick"/> -->
       </body>
+    </body>
+
+    <body name="brick" pos="0.2 0.3 0.016">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
     </body>
 
     
