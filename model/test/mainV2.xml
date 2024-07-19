@@ -1,0 +1,150 @@
+<mujoco model="Brickiebot">
+
+  <!-- <compiler meshdir="assets"/> -->
+  <include file="scene.xml"/>
+  <include file="assets/assets/ufactory_lite6/lite6.xml"/>
+  <option timestep="0.001" jacobian="dense"/>
+  <size nconmax="500" njmax="1500" nkey="1"/>
+
+  <!-- <default>
+    <geom solref="1e-2 5" solimp=".5 .99 1e-3" friction=".5"/>
+  </default> -->
+
+
+<default>
+    <default class="crane" >
+    <geom type="mesh"/>
+      <default class="visual1">
+        <geom contype="0" conaffinity="0" group="2" material="white"/>
+      </default>
+      <default class="collision1">
+        <geom group="3" mass="0" density="0"/>
+      </default>
+    </default>
+</default>
+
+
+    <asset>
+      <mesh name="shaft"        scale="0.005 0.005 0.005" file="shaft2.stl"/>
+      <mesh name="crane_body"   scale="0.001 0.001 0.001" file="crane_body.stl"/>
+      <mesh name="brick"        scale="0.001 0.001 0.001" file="brick.stl"/>
+      <mesh name="end_effector" scale="0.001 0.001 0.001" file="end_effector.stl"/>
+      <mesh name="rails"        scale="0.001 0.001 0.001" file="rails.stl"/>
+    </asset>
+
+
+  <worldbody>
+    <light pos=".5 0 2"/>
+
+    <body name="shaft_structure" childclass="crane">
+      <body name="crane_body" pos="0 0 0">
+        <geom class="visual1" mesh="crane_body"/>
+        <!-- <geom class="collision1" mesh="brick"/> -->
+      </body>
+
+      <body name="end_effector" pos="0 0 0">
+        <geom class="visual1" mesh="end_effector"/>
+        <!-- <geom class="collision1" mesh="brick"/> -->
+      </body>
+
+      <body name="rails" pos="0 0 0">
+        <geom class="visual1" mesh="rails"/>
+        <!-- <geom class="collision1" mesh="brick"/> -->
+      </body>
+    </body>
+
+    <body name="brick" pos="0.2 0.3 0.016">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+
+    
+    <!-- ############################################### TENDON TYPE HERE ############################################## -->
+
+    <body name="beam" pos="0 0 0.3785" quat="0 1 0 1">
+      <body name="slider" pos="0 0 0">
+        <geom type="cylinder" density="100" size=".015 .005 .015" rgba="0 1 0 1" mass="10"/>
+        <geom type="cylinder" density="100" size=".02 .0025 .02" pos="0 0 0.0075" rgba="0 1 0 1" mass="10"/>
+        <geom type="cylinder" density="100" size=".02 .0025 .02" pos="0 0 -0.0075" rgba="0 1 0 1" mass="10"/>
+      </body>
+    </body> 
+
+    <body name="moving_box" pos="0 0.015 0.41" quat="0 1 0 1">
+      <geom type="box" size=".001 .001 .001" rgba=".5 .2 .8 1" mass="10"/>
+      <body name="rope" pos="0 0 0"  quat="0 0 1 1">
+            <composite type="cable" count="50 1 1" curve="s 0 0" offset="0 0 0" prefix="rope" initial="ball" size="0.35 1 1">
+                <joint kind="main" damping="0.01" armature="0.001"/>
+                <geom type="capsule" size=".0005 .001 0.3" rgba=".8 .2 .1 1"/>
+            </composite>
+        </body>
+      <joint name="slider" type="slide" axis="0 1 0" pos="0 0 0" damping="1"/>
+    </body> 
+
+    <body name="payload" pos="0 0.015 0.05">
+      <geom type="box" size=".015 .02 0.01" density="100" rgba=".5 .2 .8 1" mass="0.01"/>
+      <freejoint/>
+      <geom type="cylinder" size=".001 .001" density="100"  rgba=".5 .2 .2 .5"/>
+    </body>
+
+
+<!-- ################################################## WALL ################################################## -->
+    <body name="brick11" pos="0 0.04 0.016">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick10" pos="0 0.04 0.048">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick1" pos="0 0.1 0.016">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick2" pos="0 0.16 0.016">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick3" pos="0 0.22 0.016">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick4" pos="0 0.1 0.048">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick5" pos="0 0.16 0.048">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick6" pos="0 0.22 0.048">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick7" pos="0 0.1 0.080">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick8" pos="0 0.16 0.080">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick9" pos="0 0.22 0.080">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+
+  </worldbody>
+
+
+
+  <equality>
+    <weld body1="payload" body2="ropeB_last" active="true" anchor="0 0 0" torquescale="0"/>
+  </equality>
+
+  <actuator>
+    <position joint="slider" ctrllimited="true" ctrlrange="-1 1"/> 
+  </actuator>
+
+
+</mujoco>  
+

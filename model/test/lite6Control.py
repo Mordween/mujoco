@@ -129,7 +129,7 @@ def move(viewer, robot, position, numberOfSteps):
 lite6 = rtb.models.Lite6()
 lite6.base = SE3(4, 0, 0.0)*SE3.Rz(pi/2)
 
-xml_path = 'main.xml'
+xml_path = 'mainV2.xml'
 # xml_path.append('assets/ufactory_lite6/lite6.xml')
 model = mujoco.MjModel.from_xml_path(xml_path)
 
