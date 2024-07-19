@@ -31,32 +31,51 @@ def jacobian_i_k_optimisation(robot, v, qd_max=1):
     return result.is_success(), result.GetSolution(qd_opt)
 
 
-def robot_move_to(robot, simulation, dt, dest, gain=2, treshold=0.001, qd_max=1, move_brick=False): 
+def robot_move_to(viewer, robot, position, gain=2, treshold=0.001, qd_max=1): 
         arrived = False
+        dest = SE3(position['x'] - data.body('link_base').xpos[0], 
+                   position['y'] - data.body('link_base').xpos[1], 
+                   position['z'] - data.body('link_base').xpos[2])
+        print(robot.fkine(robot.q))
+
+        pos_nm1 = (data.body('link6').xpos).copy()
         while not arrived:
 
-            q = [   data.joint('joint1').qpos, data.joint('joint2').qpos, 
-                    data.joint('joint3').qpos, data.joint('joint4').qpos, 
-                    data.joint('joint5').qpos, data.joint('joint6').qpos]
+            robot.q = [ data.joint('joint1').qpos, data.joint('joint2').qpos, 
+                        data.joint('joint3').qpos, data.joint('joint4').qpos, 
+                        data.joint('joint5').qpos, data.joint('joint6').qpos]
+            
+            end_effector = SE3(data.body('link6').xpos - data.body('link_base').xpos)
+             #robot.fkine(robot.q)
             
             if isinstance(dest, SE3) or (isinstance(dest, np.ndarray) and dest.shape==(4,4)):
-                v, arrived = rtb.p_servo(robot.fkine(q), dest, gain=gain, threshold=treshold)
-                qd = jacobian_i_k_optimisation(robot, v, qd_max=qd_max)[1]
+                v, arrived = rtb.p_servo(end_effector, dest, gain=gain, threshold=treshold)     # TODO question par rapport a autres code avec cp_servo ?? d'où ça vient
+                # qd = jacobian_i_k_optimisation(robot, v, qd_max=qd_max)[1]                              # TODO question par raport à v, est ce la vitesse du end effector?
+               
+                velocity = (data.body('link6').xpos-pos_nm1)*(1/1e-2)
+                velocityV = [velocity[0], velocity[1], velocity[2], 0, 0, 0]
+                pos_nm1 = (data.body('link6').xpos).copy()
+               
+                qd = jacobian_i_k_optimisation(robot, velocityV, qd_max=qd_max)[1]
+                print("arrived : ", arrived, "qd : ", qd)
             else:
-                qd, arrived = rtb.jp_servo(q, dest, gain=gain, threshold=treshold)
+                qd, arrived = rtb.jp_servo(robot.q, dest, gain=gain, threshold=treshold)
 
-            qpos = [qd[0], qd[1], qd[2], qd[3], qd[4], qd[5], 0]
+            # qpos = [qd[0], qd[1], qd[2], qd[3], qd[4], qd[5], 0]
+            qpos0 = [qd[0], qd[1], qd[2], qd[3], qd[4], qd[5], 0]
+            qpos = [x * 2 for x in qpos0]
+
 
             data.ctrl = qpos
 
             mujoco.mj_step(model, data)
-            simulation.sync()
-            time.sleep(dt)
+            viewer.sync()
+            time.sleep(1e-2)
 
         return arrived, robot.q
 
 
-def move(viewer, robot, position, numberOfSteps):
+def move(viewer, robot, position, numberOfSteps = 500):
 
 
         robot.q = [     data.joint('joint1').qpos, data.joint('joint2').qpos, 
@@ -158,7 +177,8 @@ T_pick = SE3(2, 3-0.27, 0.3)
 T_place_up = SE3(0.0, 2, 2)
 T_place = SE3(0, 2, 0.9)
 
-position = {'x': 0.2, 'y': 0.3, 'z': 0.2}
+# position = {'x': 0.2, 'y': 0.3, 'z': 0.2}
+position = {'x': 0.2, 'y': 0.3, 'z': 0.32}
 
 lite6Move = 0
 
@@ -169,12 +189,13 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         
         if lite6Move == 0:
             lite6Move = 1
-            move(viewer, lite6, position, 500)
+            # move(viewer, lite6, position, 500)
+            robot_move_to(viewer, lite6, position)
 
 
         # data.ctrl = [0, 0, 0, 0, 0, 0, 10]
 
-        # print(data.body('link6').xpos)  # position of end effector
+        print(data.body('link6').xpos)  # position of end effector
 
 
         # robot_move_to(lite6, viewer, 1e-2, T_place_up*SE3.RPY([0, 0, -90], order='xyz', unit='deg'), gain=2, treshold=0.001, qd_max=1)
