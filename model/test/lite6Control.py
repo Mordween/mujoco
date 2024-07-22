@@ -12,7 +12,7 @@ import numpy as np
 import copy
 
 
-
+shaftPos = 0.015
 
 def jacobian_i_k_optimisation(robot, v, qd_max=1):
 
@@ -107,7 +107,8 @@ def crane_move_to(dest, n_sample):
         crane_body_pos = SE3.Tx(traj[i].x)
         end_effector_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)
         beam_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)*SE3.Tz(0.3785) 
-        moving_box_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y + 0.015)*SE3.Tz(0.41)
+        moving_box_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y + shaftPos)*SE3.Tz(0.41)
+        print(shaftPos)
 
         model.body('crane_body').pos    = [crane_body_pos.x     , crane_body_pos.y  , crane_body_pos.z]
         model.body('end_effector').pos  = [end_effector_pos.x   , end_effector_pos.y, end_effector_pos.z]
@@ -160,11 +161,16 @@ T_place = SE3(0, 2, 0.9)
 
 # position = {'x': 0.2, 'y': 0.3, 'z': 0.2}
 position = {'x': 0.2, 'y': 0.3, 'z': 0.32}
-positionShaft = {'x': 0.2, 'y': 0.3, 'z': 0}
+positionShaft = {'x': 0.2, 'y': 0.285, 'z': 0}
 
 lite6Move = 0
+
+shaftUp = 0
 craneMove = 0
 
+takeTheBrick = 0
+
+print(dir(model.body('rope')))
 with mujoco.viewer.launch_passive(model, data) as viewer:
     start = time.time()
     i = 0
@@ -174,15 +180,51 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         #     lite6Move = 1
         #     # move(viewer, lite6, position, 500)
         #     robot_move_to(viewer, lite6, position)
+        if shaftUp == 0:
+            shaftUp = 1
+            for i in range(2000):
+                shaftPos -= 0.0001
+                model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
+                mujoco.mj_step(model, data)
+                viewer.sync()
+                time.sleep(1e-2)
 
         if craneMove == 0:
             craneMove = 1
-            crane_move_to(positionShaft, 500)
+            crane_move_to(positionShaft, 1500)
+            
+        if takeTheBrick == 0:
+            takeTheBrick = 1
+            data.ctrl = [0, 0, 0, 0, 0, 0, 0, 1]
+            mujoco.mj_step(model, data)
+            viewer.sync()
+            time.sleep(1)
 
-        # data.ctrl = [0, 0, 0, 0, 0, 0, 10]
 
-        print(data.body('link6').xpos)  # position of end effector
+            for i in range(2000):
+                shaftPos += 0.0001
+                model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
+                mujoco.mj_step(model, data)
+                viewer.sync()
+                time.sleep(1e-2)
 
+            time.sleep(1)
+
+            for i in range(2000):
+                shaftPos -= 0.0001
+                model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
+                mujoco.mj_step(model, data)
+                viewer.sync()
+                time.sleep(1e-2)
+
+            time.sleep(1)
+            for i in range(1000):
+                data.ctrl = [0, 0, 0, 0, 0, 0, 0, (1000-i/1000)]
+                mujoco.mj_step(model, data)
+                viewer.sync()
+                time.sleep(1e-2)
+
+        # print(data.body('link6').xpos)  # position of end effector
 
         mujoco.mj_step(model, data)
         viewer.sync()
