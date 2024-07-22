@@ -107,12 +107,13 @@ def crane_move_to(dest, n_sample):
         crane_body_pos = SE3.Tx(traj[i].x)
         end_effector_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)
         beam_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)*SE3.Tz(0.3785) 
-  
+        moving_box_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y + 0.015)*SE3.Tz(0.41)
+
         model.body('crane_body').pos    = [crane_body_pos.x     , crane_body_pos.y  , crane_body_pos.z]
         model.body('end_effector').pos  = [end_effector_pos.x   , end_effector_pos.y, end_effector_pos.z]
         model.body('beam').pos          = [beam_pos.x           , beam_pos.y        , beam_pos.z]
-
-
+        model.body('moving_box').pos    = [moving_box_pos.x     , moving_box_pos.y  , moving_box_pos.z]
+    
 
         # model.body('crane_body').pos = SE3.Tx(traj[i].x)
         # model.body('end_effector').pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)
