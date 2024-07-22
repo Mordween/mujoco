@@ -25,7 +25,6 @@
 
 
     <asset>
-      <mesh name="shaft"        scale="0.005 0.005 0.005" file="shaft2.stl"/>
       <mesh name="crane_body"   scale="0.001 0.001 0.001" file="crane_body.stl"/>
       <mesh name="brick"        scale="0.001 0.001 0.001" file="brick.stl"/>
       <mesh name="end_effector" scale="0.001 0.001 0.001" file="end_effector.stl"/>
@@ -88,14 +87,6 @@
 
 
 <!-- ################################################## WALL ################################################## -->
-    <body name="brick11" pos="0 0.04 0.016">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
-    <body name="brick10" pos="0 0.04 0.048">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
     <body name="brick1" pos="0 0.1 0.016">
       <geom type="mesh" mesh="brick" mass="0.01"/>
       <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
@@ -129,6 +120,14 @@
       <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
     </body>
     <body name="brick9" pos="0 0.22 0.080">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick11" pos="0 0.04 0.016">
+      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+    </body>
+    <body name="brick10" pos="0 0.04 0.048">
       <geom type="mesh" mesh="brick" mass="0.01"/>
       <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
     </body>

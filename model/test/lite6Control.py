@@ -96,7 +96,34 @@ def move(viewer, robot, position, numberOfSteps = 500):
             viewer.sync()
             time.sleep(1e-2)
 
+def crane_move_to(dest, n_sample):
+    T_dest = SE3(dest['x'], dest['y'], dest['z'])
+    print("t dest", T_dest)
+    print("end effector position", model.body('end_effector').pos)
+    traj = rtb.ctraj(SE3(model.body('end_effector').pos), T_dest, n_sample)
+    
+    for i in range(n_sample ):
+        print(SE3.Tx(traj[i].x))
+        crane_body_pos = SE3.Tx(traj[i].x)
+        end_effector_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)
+        beam_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)*SE3.Tz(0.3785) 
+  
+        model.body('crane_body').pos    = [crane_body_pos.x     , crane_body_pos.y  , crane_body_pos.z]
+        model.body('end_effector').pos  = [end_effector_pos.x   , end_effector_pos.y, end_effector_pos.z]
+        model.body('beam').pos          = [beam_pos.x           , beam_pos.y        , beam_pos.z]
 
+
+
+        # model.body('crane_body').pos = SE3.Tx(traj[i].x)
+        # model.body('end_effector').pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)
+        # model.body('beam').pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)*SE3.Tz(0.3785)
+
+        # twist = Twist3.UnitRevolute([1 ,0, 0],[0, traj[i].y, 0.3785], 0)
+        # shaft.T = twist.SE3(traj[i].z/shaft_radius)*shaft.T
+
+        mujoco.mj_step(model, data)
+        viewer.sync()
+        time.sleep(1e-2)
 
 lite6 = rtb.models.Lite6()
 lite6.base = SE3(4, 0, 0.0)*SE3.Rz(pi/2)
@@ -117,8 +144,8 @@ model.body('link_base').quat = [1, 0, 0, 1]
 # print(model.body('link6').pos)
 
 
-print(dir(data.joint('joint1')))
-
+print(dir(model.body('crane_body')))
+print(dir(data))
 
 # traj = rtb.ctraj(SE3(model.body('end_effector')), T_dest, n_sample)
 
@@ -132,19 +159,24 @@ T_place = SE3(0, 2, 0.9)
 
 # position = {'x': 0.2, 'y': 0.3, 'z': 0.2}
 position = {'x': 0.2, 'y': 0.3, 'z': 0.32}
+positionShaft = {'x': 0.2, 'y': 0.3, 'z': 0}
 
 lite6Move = 0
+craneMove = 0
 
 with mujoco.viewer.launch_passive(model, data) as viewer:
     start = time.time()
     i = 0
     while viewer.is_running(): #and i < sim_steps:
         
-        if lite6Move == 0:
-            lite6Move = 1
-            # move(viewer, lite6, position, 500)
-            robot_move_to(viewer, lite6, position)
+        # if lite6Move == 0:
+        #     lite6Move = 1
+        #     # move(viewer, lite6, position, 500)
+        #     robot_move_to(viewer, lite6, position)
 
+        if craneMove == 0:
+            craneMove = 1
+            crane_move_to(positionShaft, 500)
 
         # data.ctrl = [0, 0, 0, 0, 0, 0, 10]
 
