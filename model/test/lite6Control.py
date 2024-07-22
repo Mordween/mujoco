@@ -6,7 +6,8 @@ import roboticstoolbox as rtb
 from spatialmath import SE3, Twist3
 import spatialmath as sm
 from spatialmath.base import *
-from pydrake.solvers import MathematicalProgram, Solve
+# from pydrake.solvers import MathematicalProgram, Solve
+from pydrake.all import( MathematicalProgram, Solve)
 import numpy as np 
 import copy
 
@@ -77,7 +78,6 @@ def robot_move_to(viewer, robot, position, gain=2, treshold=0.001, qd_max=1):
 
 def move(viewer, robot, position, numberOfSteps = 500):
 
-
         robot.q = [     data.joint('joint1').qpos, data.joint('joint2').qpos, 
                         data.joint('joint3').qpos, data.joint('joint4').qpos, 
                         data.joint('joint5').qpos, data.joint('joint6').qpos]
@@ -95,53 +95,6 @@ def move(viewer, robot, position, numberOfSteps = 500):
             mujoco.mj_step(model, data)
             viewer.sync()
             time.sleep(1e-2)
-
-
-
-# def crane_move_to(T_dest, n_sample, shaftCenterD = 0.32):
-#     traj = rtb.ctraj(SE3(end_effector.T), T_dest, n_sample)
-    
-#     for i in range(n_sample ):
-        
-#         crane.T = SE3.Tx(traj[i].x)
-#         end_effector.T = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)
-#         shaftLeft.T = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)*SE3.Tz(3.785)
-#         shaftCenter.T = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)*SE3.Tz(3.785)
-#         shaftRight.T = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)*SE3.Tz(3.785)
-#         cube.T = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y+shaftCenterD)*SE3.Tz(SE3(cube.T).z)
-#         # twist = Twist3.UnitRevolute([1 ,0, 0],[0, traj[i].y, 0.3785], 0)
-#         # shaft.T = twist.SE3(traj[i].z/shaft_radius)*shaft.T
-#         print("i : ", i)
-#         env.step(1/f)
-#         time.sleep(1/f)
-
-
-# def crane_pick_and_place(T_pick, T_place_up, T_place, n_sample):
-#     crane_move_to(T_pick, n_sample, 0.32)
-#     time.sleep(5)  
-#     # for i in range(n_sample):
-#     #     twist = Twist3.UnitRevolute([1 ,0, 0],[SE3(shaftCenter.T).x, SE3(shaftCenter.T).y, SE3(shaftCenter.T).z], 0)
-#     #     shaftLeft.T = twist.SE3((i/(1000*n_sample))/shaft_radius)*shaftCenter.T
-#     #     shaftCenter.T = twist.SE3((i/(1000*n_sample))/shaft_radius)*shaftCenter.T
-#     #     shaftRight.T = twist.SE3((i/(1000*n_sample))/shaft_radius)*shaftCenter.T
-
-#     #     env.step()
-
-#     for i in range (70):
-#         cube.T = SE3(SE3(cube.T).x, SE3(cube.T).y-(1/1000), SE3(cube.T).z)
-#         env.step()
-
-#     for i in range(int((SE3(T_place_up).z-SE3(brick.T).z)*100)):
-#         cube.T = SE3(SE3(cube.T).x, SE3(cube.T).y, SE3(cube.T).z + (1/100))
-#         env.step()
-
-
-#     time.sleep(30)
-#     crane_move_to(T_place_up, n_sample, 0.25)   
-
-#     robot_move_to(lite6, env, 1/f, T_place_up*SE3.RPY([0, 0, -90], order='xyz', unit='deg'), gain=2, treshold=0.001, qd_max=1)
-#     robot_move_to(lite6, env, 1/f, T_place*SE3.RPY([0, 0, -90], order='xyz', unit='deg'), gain=2, treshold=0.001, qd_max=1, move_brick=True)
-#     robot_move_to(lite6, env, 1/f, lite6.qz, gain=2, treshold=0.001, qd_max=1)
 
 
 
@@ -197,16 +150,6 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
         print(data.body('link6').xpos)  # position of end effector
 
-
-        # robot_move_to(lite6, viewer, 1e-2, T_place_up*SE3.RPY([0, 0, -90], order='xyz', unit='deg'), gain=2, treshold=0.001, qd_max=1)
-        # mujoco.mj_step(model, data)
-        # viewer.sync()
-        # time.sleep(1e-2)
-        # robot_move_to(lite6, viewer, 1e-2, T_place*SE3.RPY([0, 0, -90], order='xyz', unit='deg'), gain=2, treshold=0.001, qd_max=1, move_brick=True)
-        # mujoco.mj_step(model, data)
-        # viewer.sync()
-        # time.sleep(1e-2)
-        # robot_move_to(lite6, viewer, 1e-2, lite6.qz, gain=2, treshold=0.001, qd_max=1)
 
         mujoco.mj_step(model, data)
         viewer.sync()

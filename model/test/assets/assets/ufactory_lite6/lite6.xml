@@ -38,6 +38,7 @@
     <mesh file="assets/ufactory_lite6/assets/visual/link4.stl"/>
     <mesh file="assets/ufactory_lite6/assets/visual/link5.stl"/>
     <mesh file="assets/ufactory_lite6/assets/visual/link6.stl"/>
+    <mesh file="assets/ufactory_lite6/assets/visual/gripper_lite.stl"/>
     <mesh name="link_base_c"  file="assets/ufactory_lite6/assets/collision/link_base.stl"/>
     <mesh name="link1_c"      file="assets/ufactory_lite6/assets/collision/link1.stl"/>
     <mesh name="link2_c"      file="assets/ufactory_lite6/assets/collision/link2.stl"/>
@@ -45,6 +46,7 @@
     <mesh name="link4_c"      file="assets/ufactory_lite6/assets/collision/link4.stl"/>
     <mesh name="link5_c"      file="assets/ufactory_lite6/assets/collision/link5.stl"/>
     <mesh name="link6_c"      file="assets/ufactory_lite6/assets/collision/link6.stl"/>
+    <mesh name="gripper_c"    file="assets/ufactory_lite6/assets/collision/gripper_lite.stl"/>
   </asset>
 
   <worldbody>
@@ -88,7 +90,14 @@
                   <joint name="joint6" /> <!-- range="-6.28319 6.28319" -->
                   <geom class="visual" mesh="link6" material="silver"/>
                   <geom class="collision" mesh="link6_c"/>
-                  <site name="attachment_site"/>
+
+                  <body name="gripper" pos="0 0 0" quat="0 0 0 1">
+                    <inertial pos="0 -0.00194 -0.0102" quat="0 0 0 1" mass="0.13"
+                      diaginertia="0.000148148 8.57757e-05 7.71412e-05"/>
+                    <geom class="visual" mesh="gripper_lite" material="silver"/>
+                    <geom class="collision" mesh="gripper_c"/>
+                    <site name="attachment_site"/>
+                  </body>
                 </body>
               </body>
             </body>
