@@ -6,13 +6,10 @@
   <option timestep="0.001" jacobian="dense"/>
   <size nconmax="500" njmax="1500" nkey="1"/>
 
-  <!-- <default>
-    <geom solref="1e-2 5" solimp=".5 .99 1e-3" friction=".5"/>
-  </default> -->
 
-
+<!-- class allow to separate different type of mesh -->
 <default>
-    <default class="crane" >
+  <default class="crane" >
     <geom type="mesh"/>
       <default class="visual1">
         <geom contype="0" conaffinity="0" group="2" material="white"/>
@@ -84,49 +81,60 @@
 
 
 <!-- ################################################## WALL ################################################## -->
-    <body name="brick1" pos="0 0.1 0.016">
+    <body name="brickWallFloor0_0" pos="0 0.1 0.016">
       <geom type="mesh" mesh="brick" mass="0.01"/>
       <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
-    <body name="brick2" pos="0 0.16 0.016">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
-    <body name="brick3" pos="0 0.22 0.016">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
-    <body name="brick4" pos="0 0.1 0.048">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
-    <body name="brick5" pos="0 0.16 0.048">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
-    <body name="brick6" pos="0 0.22 0.048">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
-    <body name="brick7" pos="0 0.1 0.080">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
-    <body name="brick8" pos="0 0.16 0.080">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
-    <body name="brick9" pos="0 0.22 0.080">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
-    <body name="brick11" pos="0 0.04 0.016">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
-    </body>
-    <body name="brick10" pos="0 0.04 0.048">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
-      <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/>
+
+      <body name="brickWallFloor0_1" pos="0 0.06 0">
+        <geom type="mesh" mesh="brick" mass="0.01"/>
+        <!-- <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/> -->
+      </body>
+      <body name="brickWallFloor0_2" pos="0 0.12 0">
+        <geom type="mesh" mesh="brick" mass="0.01"/>
+        <!-- <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/> -->
+      </body>
+      <body name="brickWallFloor0_3" pos="0 0.18 0">
+        <geom type="mesh" mesh="brick" mass="0.01"/>
+        <!-- <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/> -->
+      </body>
+
+      <body name="brickWallFloor1_0" pos="0 0 0.032">
+        <geom type="mesh" mesh="brick" mass="0.01"/>
+        <!-- <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/> -->
+      
+        <body name="brickWallFloor1_1" pos="0 0.06 0">
+          <geom type="mesh" mesh="brick" mass="0.01"/>
+          <!-- <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/> -->
+        </body>
+        <body name="brickWallFloor1_2" pos="0 0.12 0">
+          <geom type="mesh" mesh="brick" mass="0.01"/>
+          <!-- <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/> -->
+        </body>
+        <body name="brickWallFloor1_3" pos="0 0.18 0">
+          <geom type="mesh" mesh="brick" mass="0.01"/>
+          <!-- <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/> -->
+        </body>   
+      </body>
+
+
+
+      <body name="brickWallFloor2_0" pos="0 0 0.064">
+        <!-- <geom type="mesh" mesh="brick" mass="0.01"/> -->
+        <!-- <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/> -->
+        <body name="brickWallFloor2_1" pos="0 0.06 0">
+          <geom type="mesh" mesh="brick" mass="0.01"/>
+          <!-- <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/> -->
+        </body>
+        <body name="brickWallFloor2_2" pos="0 0.12 0">
+          <geom type="mesh" mesh="brick" mass="0.01"/>
+          <!-- <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/> -->
+        </body>
+        <body name="brickWallFloor2_3" pos="0 0.18 0">
+          <geom type="mesh" mesh="brick" mass="0.01"/>
+          <!-- <joint type='free' stiffness='1' damping='0.00001' frictionloss='1' armature='0'/> -->
+        </body>
+      </body>
+
     </body>
 
   </worldbody>

@@ -68,9 +68,9 @@ def robot_move_to(viewer, robot, position, gain=2, treshold=0.001, qd_max=1):
             else:
                 qd, arrived = rtb.jp_servo(robot.q, dest, gain=gain, threshold=treshold)
 
-            qpos0 = [qd[0], qd[1], qd[2], qd[3], qd[4], qd[5], 0]
+            qpos0 = [qd[0], qd[1], qd[2], qd[3], qd[4], qd[5], data.ctrl[6], data.ctrl[7]]
             # kp
-            qpos = [x * 2 for x in qpos0]
+            qpos = [x * 1 for x in qpos0]
             data.ctrl = qpos
 
             mujoco.mj_step(model, data)
@@ -97,7 +97,7 @@ def move(viewer, robot, position, numberOfSteps = 500):
         for steps in range(numberOfSteps):
 
             qpos = qt.q[steps]
-            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], 0]
+            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], data.ctrl[6], data.ctrl[7]]
 
             mujoco.mj_step(model, data)
             viewer.sync()
@@ -127,8 +127,9 @@ def crane_move_to(dest, n_sample):
         viewer.sync()
         time.sleep(1e-2)
 
+
 lite6 = rtb.models.Lite6()
-lite6.base = SE3(4, 0, 0.0)*SE3.Rz(pi/2)
+lite6.base = SE3(0.4, 0, 0)*SE3.Rz(pi/2)
 
 xml_path = 'mainV2.xml'
 model = mujoco.MjModel.from_xml_path(xml_path)
@@ -153,16 +154,20 @@ shaftUp = 0
 craneMove = 0
 takeTheBrick = 0
 
-print(dir(model.body('rope')))
 with mujoco.viewer.launch_passive(model, data) as viewer:
     start = time.time()
     i = 0
+    viewer.cam.trackbodyid = 15
+    viewer.cam.distance = 1.5
+    viewer.cam.lookat = [0, 0, 0]
+    viewer.cam.elevation = -45
+    viewer.cam.azimuth = 45
     while viewer.is_running(): #and i < sim_steps:
         
         # if lite6Move == 0:            # move the lite6
         #     lite6Move = 1
-        #     # move(viewer, lite6, position, 500)
-        #     robot_move_to(viewer, lite6, position)
+        #     move(viewer, lite6, position, 500)
+            # robot_move_to(viewer, lite6, position)
         if shaftUp == 0:
             shaftUp = 1
             for i in range(2000):
