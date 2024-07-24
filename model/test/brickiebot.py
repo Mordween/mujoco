@@ -60,7 +60,8 @@ def crane_move_to(dest, n_sample):
         time.sleep(1e-3)
 
 def wait(duration):
-    for _ in range(duration*1000):
+    time_pass = time.time() * 1000
+    while(time.time()*1000 - time_pass < duration*1000):
         mujoco.mj_step(model, data)
         viewer.sync()
         time.sleep(1e-3)
