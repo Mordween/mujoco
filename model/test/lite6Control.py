@@ -56,13 +56,13 @@ def robot_move_to(viewer, robot, position, gain=2, treshold=0.001, qd_max=1):
             if isinstance(dest, SE3) or (isinstance(dest, np.ndarray) and dest.shape==(4,4)):
                 v, arrived = rtb.p_servo(end_effector, dest, gain=gain, threshold=treshold)     # TODO question par rapport a autres code avec cp_servo ?? d'où ça vient
                 # qd = jacobian_i_k_optimisation(robot, v, qd_max=qd_max)[1]                              # TODO question par raport à v, est ce la vitesse du end effector?
-               
+                
                 # velocity of the end effector
-                velocity = (data.body('link6').xpos - pos_nm1)*(1/1e-2)
+                velocity = (data.body('link6').xpos - pos_nm1)*(1/1e-3)
                 # velocity vector
                 velocityV = [velocity[0], velocity[1], velocity[2], 0, 0, 0]
                 pos_nm1 = (data.body('link6').xpos).copy()
-               
+                
                 qd = jacobian_i_k_optimisation(robot, velocityV, qd_max=qd_max)[1]
 
             else:
@@ -75,7 +75,7 @@ def robot_move_to(viewer, robot, position, gain=2, treshold=0.001, qd_max=1):
 
             mujoco.mj_step(model, data)
             viewer.sync()
-            time.sleep(1e-2)
+            time.sleep(1e-3)
 
         return arrived, robot.q
 
@@ -101,7 +101,7 @@ def move(viewer, robot, position, numberOfSteps = 500):
 
             mujoco.mj_step(model, data)
             viewer.sync()
-            time.sleep(1e-2)
+            time.sleep(1e-3)
 
 
 def crane_move_to(dest, n_sample):
@@ -125,7 +125,7 @@ def crane_move_to(dest, n_sample):
 
         mujoco.mj_step(model, data)
         viewer.sync()
-        time.sleep(1e-2)
+        time.sleep(1e-3)
 
 
 lite6 = rtb.models.Lite6()
@@ -148,7 +148,7 @@ T_place = SE3(0, 2, 0.9)
 
 position = {'x': 0.2, 'y': 0.3, 'z': 0.32}
 positionShaft = {'x': 0.2, 'y': 0.285, 'z': 0}
-
+positionShaft2 = {'x': 0, 'y': 0.09, 'z': 0} # 0.1 - 0.02/2
 lite6Move = 0
 shaftUp = 0
 craneMove = 0
@@ -175,7 +175,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 mujoco.mj_step(model, data)
                 viewer.sync()
-                time.sleep(1e-2)
+                time.sleep(1e-3)
 
         if craneMove == 0:
             craneMove = 1
@@ -189,27 +189,44 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
             time.sleep(1)
 
             print("down the rope !!")
-            for i in range(2000):   # down the rope
+            for i in range(1500):   # down the rope
                 shaftPos += 0.0001
                 model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 mujoco.mj_step(model, data)
                 viewer.sync()
-                time.sleep(1e-2)
+                time.sleep(1e-3)
 
             time.sleep(1)
 
             print("up the rope !!")
-            for i in range(15000    ):
+            for i in range(5000):
                 shaftPos -= 0.00005  # up the rope   
                 model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 mujoco.mj_step(model, data)
                 viewer.sync()
-                time.sleep(1e-2)
+                time.sleep(1e-3)
+
+        if craneMove == 1:
+            craneMove = 2
+            crane_move_to(positionShaft2, 1500)
+            for i in range(10000):
+                mujoco.mj_step(model, data)
+                viewer.sync()
+                time.sleep(1e-3)
+
+            print("down the rope !!")
+            for i in range(1500):   # down the rope
+                shaftPos += 0.0001
+                model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
+                mujoco.mj_step(model, data)
+                viewer.sync()
+                time.sleep(1e-3)
+            data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0]
 
         # print(data.body('link6').xpos)  # position of end effector
 
         mujoco.mj_step(model, data)
         viewer.sync()
-        time.sleep(1e-2)
+        time.sleep(1e-3)
         i +=1
         
