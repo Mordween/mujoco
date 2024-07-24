@@ -6,78 +6,11 @@ import roboticstoolbox as rtb
 from spatialmath import SE3, Twist3
 import spatialmath as sm
 from spatialmath.base import *
-# from pydrake.solvers import MathematicalProgram, Solve
-from pydrake.all import( MathematicalProgram, Solve)
 import numpy as np 
 import copy
 
 
 shaftPos = 0.015
-
-def jacobian_i_k_optimisation(robot, v, qd_max=1):
-
-    # jacobian inverse kinematics with optimisation
-    J = robot.jacobe(robot.q)
-    prog = MathematicalProgram()
-    qd_opt = prog.NewContinuousVariables(6, "v_opt")
-    # Define the error term for the cost function
-    error = J @ qd_opt - v
-    prog.AddCost(error.dot(error))
-    # Add bounding box constraint for joint velocities
-    lower_bounds = [-qd_max] * 6  # Lower bounds for each joint velocity
-    upper_bounds = [qd_max] * 6   # Upper bounds for each joint velocity
-    prog.AddBoundingBoxConstraint(lower_bounds, upper_bounds, qd_opt)
-    # Solve the optimization problem
-    result = Solve(prog)
-    return result.is_success(), result.GetSolution(qd_opt)
-
-
-def robot_move_to(viewer, robot, position, gain=2, treshold=0.001, qd_max=1): 
-        arrived = False
-
-        # desired relative position of the end effector
-        dest = SE3(position['x'] - data.body('link_base').xpos[0], 
-                   position['y'] - data.body('link_base').xpos[1], 
-                   position['z'] - data.body('link_base').xpos[2])
-
-        # position of the end effector one step ahead
-        pos_nm1 = (data.body('link6').xpos).copy()
-
-        while not arrived:
-            # update robot joint position
-            robot.q = [ data.joint('joint1').qpos, data.joint('joint2').qpos, 
-                        data.joint('joint3').qpos, data.joint('joint4').qpos, 
-                        data.joint('joint5').qpos, data.joint('joint6').qpos]
-            
-            # difference between position of the end effector and position of the base == relative position of the end effector
-            end_effector = SE3(data.body('link6').xpos - data.body('link_base').xpos)
-            #robot.fkine(robot.q)       # relative position of the end effector
-            
-            if isinstance(dest, SE3) or (isinstance(dest, np.ndarray) and dest.shape==(4,4)):
-                v, arrived = rtb.p_servo(end_effector, dest, gain=gain, threshold=treshold)     # TODO question par rapport a autres code avec cp_servo ?? d'où ça vient
-                # qd = jacobian_i_k_optimisation(robot, v, qd_max=qd_max)[1]                              # TODO question par raport à v, est ce la vitesse du end effector?
-                
-                # velocity of the end effector
-                velocity = (data.body('link6').xpos - pos_nm1)*(1/1e-3)
-                # velocity vector
-                velocityV = [velocity[0], velocity[1], velocity[2], 0, 0, 0]
-                pos_nm1 = (data.body('link6').xpos).copy()
-                
-                qd = jacobian_i_k_optimisation(robot, velocityV, qd_max=qd_max)[1]
-
-            else:
-                qd, arrived = rtb.jp_servo(robot.q, dest, gain=gain, threshold=treshold)
-
-            qpos0 = [qd[0], qd[1], qd[2], qd[3], qd[4], qd[5], data.ctrl[6], data.ctrl[7]]
-            # kp
-            qpos = [x * 1 for x in qpos0]
-            data.ctrl = qpos
-
-            mujoco.mj_step(model, data)
-            viewer.sync()
-            time.sleep(1e-3)
-
-        return arrived, robot.q
 
 '''
 Same as robot_move_to but without drake solver
