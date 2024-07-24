@@ -60,7 +60,7 @@ def crane_move_to(dest, n_sample):
         time.sleep(1e-3)
 
 def wait(duration):
-    for i in range(duration*1000):
+    for _ in range(duration*1000):
         mujoco.mj_step(model, data)
         viewer.sync()
         time.sleep(1e-3)
@@ -154,7 +154,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                                    
             case "release_brick" :
                 if i<1500:
-                    shaftPos -= 0.0001
+                    shaftPos += 0.0001
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
                     simulation_action = 'end'
@@ -162,7 +162,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                     i = 0
             
             case 'end' : 
-                print(model.body('beam').pos)
+                print(model.body('moving_box').pos)
         # print(data.body('link6').xpos)  # position of end effector
 
         mujoco.mj_step(model, data)
