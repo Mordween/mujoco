@@ -137,8 +137,9 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                     i = 0
 
             case 'take_brick' :
-                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 1, 0, 0]
-                wait(1)
+                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0, 0.05, -0.05]
+                wait(5)
+                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 1, 0.05, -0.05]
                 simulation_action = 'up_rope'
                 i = 0
             
@@ -167,9 +168,9 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
             case 'robot_move':
                 wait(2)
-                position = {'x': model.body('brick').pos[0], 'y': model.body('brick').pos[1], 'z': model.body('brick').pos[2]} 
-                quat = [model.body('brick').quat[0], model.body('brick').quat[1], model.body('brick').quat[2]]
-                move(viewer, lite6, position, quat, 500)
+                # position = {'x': model.body('brick').pos[0], 'y': model.body('brick').pos[1], 'z': model.body('brick').pos[2]} 
+                # quat = [model.body('brick').quat[0], model.body('brick').quat[1], model.body('brick').quat[2]]
+                # move(viewer, lite6, position, quat, 500)
                 simulation_action = 'end'
             
             case 'end' : 
