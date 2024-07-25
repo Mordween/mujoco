@@ -66,7 +66,7 @@
     <body name="moving_box" pos="0 0.015 0.41" quat="0 1 0 1">
       <geom type="box" size=".001 .001 .001" rgba=".5 .2 .8 1" mass="1"/>
       <body name="rope" pos="0 0 0"  quat="0 0 1 1">
-          <composite type="cable" count="50 1 1" curve="s 0 0" offset="0 0 0" prefix="rope" initial="ball" size="0.40 1 1">
+          <composite type="cable" count="50 1 1" curve="s 0 0" offset="0 0 0" prefix="rope" initial="ball" size="0.35 1 1">
             <joint kind="main" damping="0.01" armature="0.001"/>
             <geom type="capsule" size=".0005 .001 0.3" rgba=".8 .2 .1 1"/>
           </composite>
@@ -74,12 +74,32 @@
       <joint name="slider" type="slide" axis="0 1 0" pos="0 0 0" damping="1"/>
     </body> 
 
-    <body name="payload" pos="0 0.015 0.013">
+    <body name="payload" pos="0 0.015 0.06">
       <geom type="sphere" size=".001 .001" density="100" rgba=".5 .2 .8 1" mass="0.01"/>
+      <site name="sphere_0" pos="0 0 0" size="0.0015" rgba="1 0 0 1"/>
       <freejoint/>
       <!-- <geom type="cylinder" size=".001 .001" density="100"  rgba=".5 .2 .2 .5"/> -->
     </body>
 
+
+    <!-- TODO mettre en place le gripper avec la pince qui bouge -->
+<!-- ################################################ GRIPPER ################################################# -->
+  <body name="gripper_rope" pos="0 0.015 0.01" quat="0 0 0 1">
+    <freejoint/>
+    <geom type="box" size="0.05 0.02 0.001" rgba=".5 .2 .8 1" mass="0.001"/>
+    <site name="gripper_0_0" pos="0.05 0.02 0" size="0.0015" rgba="1 0 0 1"/>
+    <site name="gripper_0_1" pos="0.05 -0.02 0" size="0.0015" rgba="1 0 0 1"/>
+    <site name="gripper_1_0" pos="-0.05 0.02 0" size="0.0015" rgba="1 0 0 1"/>
+    <site name="gripper_1_1" pos="-0.05 -0.02 0" size="0.0015" rgba="1 0 0 1"/>
+    <!-- <body name="gripper_left" pos="0.05 0 -0.004"  quat="0 0 1 1">
+      <geom type="box" size="0.005 0.004 0.01" rgba=".5 .2 .8 1" mass="0.001"/>
+      <joint name="gripper_left_joint" type="slide" axis="1 0 0" pos="0 0 0" damping="1"/>
+    </body>
+    <body name="gripper_right" pos="-0.05 0 -0.004"  quat="0 0 1 1">
+      <geom type="box" size="0.005 0.004 0.01" rgba=".5 .2 .8 1" mass="0.001"/>
+      <joint name="gripper_right_joint" type="slide" axis="1 0 0" pos="0 0 0" damping="1"/>
+    </body> -->
+  </body> 
 
 <!-- ################################################## WALL ################################################## -->
     <body name="brickWallFloor0_0" pos="0 0.1 0.016">
@@ -140,11 +160,39 @@
 
   <equality>
     <weld body1="payload" body2="ropeB_last" active="true" anchor="0 0 0" torquescale="0"/>
+    <!-- <weld body1="gripper_rope" body2="payload" active="true" anchor="0 0 0" torquescale="0"/> -->
   </equality>
+
+  <tendon>
+    <spatial name="site_0_0" limited="true" width=".001" springlength="0.5" range="0 0.05" solimplimit="0.001 0.001 0.001 0.5 1" solreflimit="-100 -0" damping="50">
+      <site site="sphere_0"/>
+      <site site="gripper_0_0"/>
+    </spatial>
+
+    <spatial name="site_0_1" limited="true" width=".001" springlength="0.5" range="0 0.2" solimplimit="0.001 0.001 0.001 0.5 1" solreflimit="-100 -0" damping="50">
+      <site site="sphere_0"/>
+      <site site="gripper_0_1"/>
+    </spatial>
+
+    <spatial name="site_1_0" limited="true" width=".001" springlength="0.5" range="0 0.2" solimplimit="0.001 0.001 0.001 0.5 1" solreflimit="-100 -0" damping="50">
+      <site site="sphere_0"/>
+      <site site="gripper_1_0"/>
+    </spatial>
+
+    <spatial name="site_1_1" limited="true" width=".001" springlength="0.5" range="0 0.2" solimplimit="0.001 0.001 0.001 0.5 1" solreflimit="-100 -0" damping="50">
+      <site site="sphere_0"/>
+      <site site="gripper_1_1"/>
+    </spatial>
+
+  </tendon>
+
 
   <actuator>
     <position joint="slider" ctrllimited="true" ctrlrange="-1 1"/> 
     <adhesion name="adhere_arm" body="payload" ctrlrange="0 1" gain="5"/>
+
+    <!-- <position name="gipper_left" joint="gripper_left_joint" ctrllimited="true" ctrlrange="0 0.05"/> 
+    <position name="gripper_right" joint="gripper_right_joint" ctrllimited="true" ctrlrange="-0.05 0"/>  -->
   </actuator>
 
 

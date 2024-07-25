@@ -16,13 +16,13 @@ shaftPos = 0.015
 Same as robot_move_to but without drake solver
 only with roboticstoolbox-python
 '''
-def move(viewer, robot, position, numberOfSteps = 500):
+def move(viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 500):
 
         robot.q = [     data.joint('joint1').qpos, data.joint('joint2').qpos, 
                         data.joint('joint3').qpos, data.joint('joint4').qpos, 
                         data.joint('joint5').qpos, data.joint('joint6').qpos]
         
-        Tep = sm.SE3.Trans(position['x'], position['y'], position   ['z']) * sm.SE3.OA([1, 0,1], [0, 0, -1])
+        Tep = sm.SE3.Trans(position['x'], position['y'], position['z']) * sm.SE3.OA([1, 0,1], quat)
         sol = robot.ik_LM(Tep)         # solve IK
 
         qt = rtb.jtraj(robot.q, sol[0], numberOfSteps)
@@ -93,9 +93,9 @@ shaftUp = 0
 craneMove = 0
 takeTheBrick = 0
 
-simulation_action = 'init'
+# simulation_action = 'init'
 
-
+simulation_action = "hmmm"
 
 with mujoco.viewer.launch_passive(model, data) as viewer:
     start = time.time()
@@ -105,11 +105,16 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
     viewer.cam.lookat = [0, 0, 0]
     viewer.cam.elevation = -45
     viewer.cam.azimuth = 45
+    print(dir(model.body('brick')))
+
+    # print(dir(data.body("gripper_left")))
+    # data.body("gripper_left").xipos = [0, 0.1 ,0]
+
     while viewer.is_running(): #and i < sim_steps:
         
         match simulation_action :
             case 'init' :
-                move(viewer, lite6, position, 500)
+                move(viewer, lite6, position, numberOfSteps=500)
                 # robot_move_to(viewer, lite6, position)
                 simulation_action = 'rope_init'
                 i = 0
@@ -158,9 +163,16 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                     shaftPos += 0.0001
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
-                    simulation_action = 'end'
+                    simulation_action = 'robot_move'
                     data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0]
                     i = 0
+
+            case 'robot_move':
+                wait(2)
+                position = {'x': model.body('brick').pos[0], 'y': model.body('brick').pos[1], 'z': model.body('brick').pos[2]} 
+                quat = [model.body('brick').quat[0], model.body('brick').quat[1], model.body('brick').quat[2]]
+                move(viewer, lite6, position, quat, 500)
+                simulation_action = 'end'
             
             case 'end' : 
                 print(model.body('moving_box').pos)
