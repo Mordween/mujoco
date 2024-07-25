@@ -29,7 +29,7 @@ def move(viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 500):
         for steps in range(numberOfSteps):
 
             qpos = qt.q[steps]
-            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], data.ctrl[6], data.ctrl[7]]
+            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], data.ctrl[6], data.ctrl[7], 0, 0]
 
             mujoco.mj_step(model, data)
             viewer.sync()
@@ -93,9 +93,7 @@ shaftUp = 0
 craneMove = 0
 takeTheBrick = 0
 
-# simulation_action = 'init'
-
-simulation_action = "hmmm"
+simulation_action = 'init'
 
 with mujoco.viewer.launch_passive(model, data) as viewer:
     start = time.time()
@@ -139,7 +137,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                     i = 0
 
             case 'take_brick' :
-                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 1]
+                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 1, 0, 0]
                 wait(1)
                 simulation_action = 'up_rope'
                 i = 0
@@ -164,7 +162,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
                     simulation_action = 'robot_move'
-                    data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0]
+                    data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0, 0, 0]
                     i = 0
 
             case 'robot_move':
