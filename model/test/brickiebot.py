@@ -115,56 +115,59 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 move(viewer, lite6, position, numberOfSteps=500)
                 # robot_move_to(viewer, lite6, position)
                 simulation_action = 'rope_init'
-                i = 0
+
             case 'rope_init':
-                if i<2000:
-                    shaftPos -= 0.0001
+                positionZ = 0.12
+                speed = 0.0001
+                print(data.body('gripper_rope').xpos    )
+                if (data.body('gripper_rope').xpos[2]< positionZ):
+                    shaftPos -= speed
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
                     simulation_action = 'shaftMove'
-                    i = 0
 
             case 'shaftMove' :
                 crane_move_to(positionShaft, 1500)
                 simulation_action = 'down_rope'
 
             case 'down_rope':
-                if i<1500:
-                    shaftPos += 0.0001
+                positionZ = 0.03
+                speed = 0.0001
+                if (data.body('gripper_rope').xpos[2]> positionZ):
+                    shaftPos += speed
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
                     simulation_action = 'take_brick'
-                    i = 0
 
             case 'take_brick' :
                 data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0, 0.05, -0.05]
                 wait(5)
                 data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 1, 0.05, -0.05]
                 simulation_action = 'up_rope'
-                i = 0
             
             case "up_rope":
-                if i<5000:
-                    shaftPos -= 0.00005
+                positionZ = 0.12
+                speed = 0.00005
+                if (data.body('gripper_rope').xpos[2]< positionZ):
+                    shaftPos -= speed
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
                     simulation_action = 'shaft_rebase'
-                    i = 0
 
             case 'shaft_rebase':
                 crane_move_to(positionShaft2, 1500)
                 wait(10)
                 simulation_action = 'release_brick'
-                i = 0
                                    
             case "release_brick" :
-                if i<1500:
-                    shaftPos += 0.0001
+                positionZ = 0.9
+                speed = 0.0001
+                if (data.body('gripper_rope').xpos[2]> positionZ):
+                    shaftPos += speed
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
                     simulation_action = 'robot_move'
                     data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0, 0, 0]
-                    i = 0
 
             case 'robot_move':
                 wait(2)
