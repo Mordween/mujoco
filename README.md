@@ -19,7 +19,7 @@ Currently, the code allows the shaft to be moved towards the brick, and the bric
 ## Python dependencies
 
 - numpy==1.26
-- drake==latest
+- drake==latest // optional for brickiebot.py
 - mujoco==latest
 - spatialmath==latest
 - roboticstoolbox-python==[this version](https://github.com/Mordween/robotics-toolbox-python)

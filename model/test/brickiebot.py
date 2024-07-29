@@ -131,7 +131,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 simulation_action = 'down_rope'
 
             case 'down_rope':
-                positionZ = 0.03
+                positionZ = 0.033
                 speed = 0.0001
                 if (data.body('gripper_rope').xpos[2]> positionZ):
                     shaftPos += speed
