@@ -3,7 +3,8 @@
   <!-- <compiler meshdir="assets"/> -->
   <include file="scene.xml"/>
   <include file="assets/assets/ufactory_lite6/lite6.xml"/>
-  <option timestep="0.001" jacobian="dense"/>
+  <option timestep="0.001" jacobian="dense" noslip_iterations="5"/>
+  <option><flag multiccd="enable"/> </option>
   <size nconmax="500" njmax="1500" nkey="1"/>
 
 
@@ -26,6 +27,9 @@
       <mesh name="brick"        scale="0.001 0.001 0.001" file="brick.stl"/>
       <mesh name="end_effector" scale="0.001 0.001 0.001" file="end_effector.stl"/>
       <mesh name="rails"        scale="0.001 0.001 0.001" file="rails.stl"/>
+      
+      <mesh name="grab1_left"    scale="1 1 1" file="grab1_left.stl"/>
+      <mesh name="grab1_right"   scale="1 1 1" file="grab1_right.stl"/>
     </asset>
 
 
@@ -47,8 +51,11 @@
     </body>
 
     <body name="brick" pos="0.2 0.3 0.016">
-      <geom type="mesh" mesh="brick" mass="0.01"/>
+      <geom type="mesh" mesh="brick" mass="0.1"/>
       <joint type='free' />      
+      <!-- <joint name="brickX" type="slide" limited="false" actuatorfrclimited="false" axis="1 0 0"/>
+      <joint name="brickY" type="slide" limited="false" actuatorfrclimited="false" axis="0 1 0"/>
+      <joint name="brickZ" type="slide" limited="false" actuatorfrclimited="false" axis="0 0 1"/> -->
       <!-- stiffness='1'  armature='0'    frictionloss='0.1'  damping='0.00001' -->
     </body>
 
@@ -85,25 +92,27 @@
     <!-- TODO mettre en place le gripper avec la pince qui bouge -->
 <!-- ################################################ GRIPPER ################################################# -->
   <body name="gripper_rope" pos="0 0.015 0.02" quat="0 0 0 1">
-    <!-- <freejoint/> -->
     <joint name="gripper_jointX" type="slide" limited="false" actuatorfrclimited="false" axis="1 0 0"/>
     <joint name="gripper_jointY" type="slide" limited="false" actuatorfrclimited="false" axis="0 1 0"/>
     <joint name="gripper_jointZ" type="slide" limited="false" actuatorfrclimited="false" axis="0 0 1"/>
     <geom type="box" size="0.05 0.02 0.001" rgba=".5 .2 .8 1" mass="0.001"/>
-    <!-- <site name="gripper_0_0" pos="0.05 0.02 0" size="0.0015" rgba="1 0 0 1"/>
-    <site name="gripper_0_1" pos="0.05 -0.02 0" size="0.0015" rgba="1 0 0 1"/>
-    <site name="gripper_1_0" pos="-0.05 0.02 0" size="0.0015" rgba="1 0 0 1"/>
-    <site name="gripper_1_1" pos="-0.05 -0.02 0" size="0.0015" rgba="1 0 0 1"/> -->
 
-    <body name="gripper_left" pos="0.05 0 -0.004"  quat="0 0 1 1">
-      <geom type="box" size="0.005 0.004 0.01" rgba=".5 .2 .8 1" mass="0.001"/>
+    <body name="gripper_left" pos="0.05 0 -0.02"  quat="0 0 1 1">
+      <geom type="mesh"  mesh="grab0_left" rgba=".5 .2 .8 1" mass="0.001"/>
       <joint name="gripper_left_joint" type="slide" axis="1 0 0" pos="0 0 0" damping="1"/>
+      <body name="gripper2_left" pos="0 0 0"  quat="0 0 0 1">
+        <geom type="mesh"  mesh="grab1_left" rgba=".5 .2 .8 1" mass="0.001"/>
+      </body>
     </body>
-    <body name="gripper_right" pos="-0.05 0 -0.004"  quat="0 0 1 1">
-      <geom type="box" size="0.005 0.004 0.01" rgba=".5 .2 .8 1" mass="0.001"/>
+    <body name="gripper_right" pos="-0.05 0 -0.02"  quat="0 0 1 1">
+      <geom type="mesh"  mesh="grab0_right" rgba=".5 .2 .8 1" mass="0.001"/>
       <joint name="gripper_right_joint" type="slide" axis="1 0 0" pos="0 0 0" damping="1"/>
+      <body name="gripper2_right" pos="0 0 0"  quat="0 0 0 1">
+        <geom type="mesh"  mesh="grab1_right" rgba=".5 .2 .8 1" mass="0.001"/>
+      </body>
     </body>
-  </body> 
+  </body>
+
 
 
 
@@ -192,13 +201,13 @@
 
   </tendon> -->
 
-
+<!-- gripper_rope -->
   <actuator>
     <position joint="slider" ctrllimited="true" ctrlrange="-1 1"/> 
     <adhesion name="adhere_arm" body="payload" ctrlrange="0 1" gain="5"/>
 
-    <position name="gipper_left" joint="gripper_left_joint" ctrllimited="true" ctrlrange="0 0.05"/> 
-    <position name="gripper_right" joint="gripper_right_joint" ctrllimited="true" ctrlrange="-0.05 0"/> 
+    <position name="gipper_left" joint="gripper_left_joint" ctrllimited="true" ctrlrange="0 0.05" kp="10"/> 
+    <position name="gripper_right" joint="gripper_right_joint" ctrllimited="true" ctrlrange="-0.05 0" kp="10"/> 
   </actuator>
 
 

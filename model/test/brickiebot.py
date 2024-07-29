@@ -128,10 +128,11 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
             case 'shaftMove' :
                 crane_move_to(positionShaft, 1500)
+                wait(20)
                 simulation_action = 'down_rope'
 
             case 'down_rope':
-                positionZ = 0.033
+                positionZ = 0.046
                 speed = 0.0001
                 if (data.body('gripper_rope').xpos[2]> positionZ):
                     shaftPos += speed
@@ -141,8 +142,8 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
             case 'take_brick' :
                 data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0, 0.05, -0.05]
-                wait(5)
-                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 1, 0.05, -0.05]
+                wait(15)
+                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0, 0.05, -0.05]
                 simulation_action = 'up_rope'
             
             case "up_rope":
