@@ -18,11 +18,16 @@ only with roboticstoolbox-python
 '''
 def move(viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 500):
 
+        positionR = [   position['y'] - data.body('link_base').xpos[1],
+                     - (position['x'] - data.body('link_base').xpos[0]),  
+                        position['z'] - data.body('link_base').xpos[2]]
+        
+        print("position relative : ", positionR)
         robot.q = [     data.joint('joint1').qpos, data.joint('joint2').qpos, 
                         data.joint('joint3').qpos, data.joint('joint4').qpos, 
                         data.joint('joint5').qpos, data.joint('joint6').qpos]
         
-        Tep = sm.SE3.Trans(position['x'], position['y'], position['z']) * sm.SE3.OA([1, 0,1], quat)
+        Tep = sm.SE3.Trans(positionR[0], positionR[1], positionR[2]) * sm.SE3.OA([1, 0,1], quat)
         sol = robot.ik_LM(Tep)         # solve IK
 
         qt = rtb.jtraj(robot.q, sol[0], numberOfSteps)
@@ -161,13 +166,17 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 simulation_action = 'move_robot'
             
             case 'move_robot':
-
+                quat = [0, 1, 0]
                 print(data.body('brick').xpos)
                 print(model.body('brick').pos)
-                position = {'x': data.body('brick').xpos[0]-0.005, 
+
+
+                position = {'x': data.body('brick').xpos[0]+0.005, 
                             'y': data.body('brick').xpos[1], 
                             'z': data.body('brick').xpos[2]} 
-                move(viewer, lite6, position, numberOfSteps=500)
+                 
+                print(position)
+                move(viewer, lite6, position, quat, numberOfSteps=500)
                 wait(20)
                 simulation_action = 'release_brick'
                                    
