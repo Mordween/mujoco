@@ -153,7 +153,8 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
             
             case "up_rope":
                 positionZ = 0.15
-                speed = 0.00005
+                # speed = 0.00005
+                speed = 0.0001
                 if (data.body('gripper_rope').xpos[2]< positionZ):
                     shaftPos -= speed
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
@@ -171,14 +172,28 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 print(model.body('brick').pos)
 
 
-                position = {'x': data.body('brick').xpos[0]+0.005, 
+                position = {'x': data.body('brick').xpos[0]+0.04, 
                             'y': data.body('brick').xpos[1], 
                             'z': data.body('brick').xpos[2]} 
                  
                 print(position)
                 move(viewer, lite6, position, quat, numberOfSteps=500)
-                wait(20)
-                simulation_action = 'release_brick'
+                wait(5)
+                simulation_action = 'turn_end_effector'
+
+
+            case "turn_end_effector":
+                
+                print(data.body('link6').xquat)
+
+                if (data.body('link6').xquat[1] < 0.5):
+                    data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], 0.1,
+                                 data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
+                else:
+                    data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], 0,
+                                 data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
+                    simulation_action = 'release_brick'
+                    wait(20)
                                    
             case "release_brick" :
                 positionZ = 0.9
