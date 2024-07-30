@@ -185,13 +185,12 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
             case "turn_end_effector":
                 
                 print(data.body('link6').xquat)
+                print("bool : ", (data.body('link6').xquat[1] < 0.5), "value : ", data.body('link6').xquat[1] )
 
-                if (data.body('link6').xquat[1] < 0.5):
-                    data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], 0.1,
+                if (data.body('link6').xquat[1] > -0.5):
+                    data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], 1.57,
                                  data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
                 else:
-                    data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], 0,
-                                 data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
                     simulation_action = 'release_brick'
                     wait(20)
                                    
