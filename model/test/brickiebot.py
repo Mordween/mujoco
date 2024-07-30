@@ -34,8 +34,26 @@ def move(viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 500):
         for steps in range(numberOfSteps):
 
             qpos = qt.q[steps]
-            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
+            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], data.ctrl[5], data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
+            """, qpos[5]"""
+            mujoco.mj_step(model, data)
+            viewer.sync()
+            time.sleep(1e-3)
 
+def translateY(viewer, robot, distance, numberOfSteps = 500):
+        robot.q = [     data.joint('joint1').qpos, data.joint('joint2').qpos, 
+                        data.joint('joint3').qpos, data.joint('joint4').qpos, 
+                        data.joint('joint5').qpos, data.joint('joint6').qpos]
+        
+        Tep = sm.SE3.Ty(distance)* sm.SE3.OA([1, 0,1], [0, 1, 0])           # https://bdaiinstitute.github.io/spatialmath-python/3d_pose_SE3.html
+        sol = robot.ik_LM(Tep)         # solve IK
+
+        qt = rtb.jtraj(robot.q, sol[0], numberOfSteps)
+        for steps in range(numberOfSteps):
+
+            qpos = qt.q[steps]
+            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], data.ctrl[5], data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
+            """, qpos[5]"""
             mujoco.mj_step(model, data)
             viewer.sync()
             time.sleep(1e-3)
@@ -133,7 +151,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
             case 'shaftMove' :
                 crane_move_to(positionShaft, 1500)
-                wait(10)
+                wait(5)
                 simulation_action = 'down_rope'
 
             case 'down_rope':
@@ -147,7 +165,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
             case 'take_brick' :
                 data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0, 0.05, -0.05]
-                wait(15)
+                wait(5)
                 data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0, 0.05, -0.05]
                 simulation_action = 'up_rope'
             
@@ -163,7 +181,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
             case 'shaft_rebase':
                 crane_move_to(positionShaft2, 1500)
-                wait(10)
+                wait(5)
                 simulation_action = 'move_robot'
             
             case 'move_robot':
@@ -191,8 +209,18 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                     data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], 1.57,
                                  data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
                 else:
-                    simulation_action = 'release_brick'
-                    wait(20)
+                    simulation_action = 'get_closer'
+                    wait(5)
+
+            case "get_closer" :
+                # quat = [0, 1, 0]
+                # position = {'x': data.body('brick').xpos[0], 
+                #             'y': data.body('brick').xpos[1], 
+                #             'z': data.body('brick').xpos[2]}
+                # move(viewer, lite6, position, quat, numberOfSteps=500)
+                translateY(viewer, lite6, -0.04, 500)
+                simulation_action = 'release_brick'
+                wait(20)
                                    
             case "release_brick" :
                 positionZ = 0.9
