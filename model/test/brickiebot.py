@@ -29,7 +29,7 @@ def move(viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 500):
         for steps in range(numberOfSteps):
 
             qpos = qt.q[steps]
-            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], data.ctrl[6], data.ctrl[7], 0, 0]
+            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
 
             mujoco.mj_step(model, data)
             viewer.sync()
@@ -112,7 +112,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         
         match simulation_action :
             case 'init' :
-                move(viewer, lite6, position, numberOfSteps=500)
+                # move(viewer, lite6, position, numberOfSteps=500)
                 # robot_move_to(viewer, lite6, position)
                 simulation_action = 'rope_init'
 
@@ -147,7 +147,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 simulation_action = 'up_rope'
             
             case "up_rope":
-                positionZ = 0.12
+                positionZ = 0.15
                 speed = 0.00005
                 if (data.body('gripper_rope').xpos[2]< positionZ):
                     shaftPos -= speed
@@ -158,6 +158,17 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
             case 'shaft_rebase':
                 crane_move_to(positionShaft2, 1500)
                 wait(10)
+                simulation_action = 'move_robot'
+            
+            case 'move_robot':
+
+                print(data.body('brick').xpos)
+                print(model.body('brick').pos)
+                position = {'x': data.body('brick').xpos[0]-0.005, 
+                            'y': data.body('brick').xpos[1], 
+                            'z': data.body('brick').xpos[2]} 
+                move(viewer, lite6, position, numberOfSteps=500)
+                wait(20)
                 simulation_action = 'release_brick'
                                    
             case "release_brick" :
@@ -178,7 +189,8 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 simulation_action = 'end'
             
             case 'end' : 
-                print(model.body('moving_box').pos)
+                print(data.body('moving_box').xpos)
+
         # print(data.body('link6').xpos)  # position of end effector
 
         mujoco.mj_step(model, data)
