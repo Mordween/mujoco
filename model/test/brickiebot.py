@@ -12,6 +12,7 @@ import copy
 
 shaftPos = 0.015
 timeStep = 1e-3
+up_down_speed = 0.0005
 '''
 Same as robot_move_to but without drake solver
 only with roboticstoolbox-python
@@ -100,7 +101,7 @@ lite6.base = SE3(0.4, 0, 0)*SE3.Rz(pi/2)
 
 xml_path = 'mainV2.xml'
 model = mujoco.MjModel.from_xml_path(xml_path)
-
+model.opt.timestep = 0.002
 data = mujoco.MjData(model)
 
 model.body('link_base').pos = [0.4, 0, 0]
@@ -145,16 +146,15 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         match simulation_action :
 
             case 'init' :
-                move(viewer, lite6, position, numberOfSteps=500)
+                # move(viewer, lite6, position, numberOfSteps=500)
                 # robot_move_to(viewer, lite6, position)
                 simulation_action = 'rope_init'
 
             case 'rope_init':
                 positionZ = 0.16
-                speed = 0.0001
                 print(data.body('gripper_rope').xpos    )
                 if (data.body('gripper_rope').xpos[2]< positionZ):
-                    shaftPos -= speed
+                    shaftPos -= up_down_speed
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
                     simulation_action = 'shaftMove'
@@ -166,9 +166,8 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
             case 'down_rope':
                 positionZ = 0.046
-                speed = 0.0001
                 if (data.body('gripper_rope').xpos[2]> positionZ):
-                    shaftPos += speed
+                    shaftPos += up_down_speed
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
                     simulation_action = 'take_brick'
@@ -181,9 +180,8 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
             
             case "up_rope":
                 positionZ = 0.15
-                speed = 0.0001
                 if (data.body('gripper_rope').xpos[2]< positionZ):
-                    shaftPos -= speed
+                    shaftPos -= up_down_speed
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
                     simulation_action = 'shaft_rebase'
@@ -224,8 +222,9 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 #             'y': data.body('brick').xpos[1], 
                 #             'z': data.body('brick').xpos[2]}
                 # move(viewer, lite6, position, quat, numberOfSteps=500)
-                translateY(viewer, lite6, -0.04, 500)
-                simulation_action = 'release_brick'
+                # translateY(viewer, lite6, -0.04, 500)
+                # simulation_action = 'release_brick'
+                simulation_action = 'end'
                 wait(20)
                                    
             case "release_brick" :

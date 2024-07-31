@@ -94,25 +94,25 @@
                   <geom class="visual" mesh="link6" material="silver"/>
                   <geom class="collision" mesh="link6_c"/>
 
-                  <body name="gripper" pos="0 0 0.02" quat="0 0 0 1">
+                  <body name="gripper" pos="0 0 0.02" quat="1 0 0 1">
                     <!-- <inertial pos="0 -0.00194 -0.0102" quat="0 0 0 1" mass="0.13"
                       diaginertia="0.000148148 8.57757e-05 7.71412e-05"/>
                     <geom class="visual" mesh="gripper_without_head" material="silver"/>
                     <geom class="collision" mesh="gripper_c"/> -->
 
-                    <body name="gripper_lite_left" pos="0.045 0 0"  quat="0 0 -1 1">
-                      <geom type="box" size="0.004 0.02 0.01" rgba=".2 .2 1 1" mass="0.0001"/>
+                    <body name="gripper_lite_left" pos="0.025 0 0"  quat="0 0 -1 1">
+                      <geom type="box" size="0.001 0.02 0.01" rgba=".2 .2 1 1" mass="0.0001"/>
                       <joint name="gripper_lite_left_joint" type="slide" axis="1 0 0" pos="0 0 0" damping="1"/>
-                      <body name="gripper2_lite_left" pos="0 0 0"  quat="0 0 0 1">
+                      <!-- <body name="gripper2_lite_left" pos="0 0 0"  quat="0 0 0 1">
                         <geom type="mesh"  mesh="grab_left" rgba=".2 .2 1 1" mass="0.0001"/>
-                      </body>
+                      </body> -->
                     </body>
-                    <body name="gripper_lite_right" pos="-0.045 0 0"  quat="0 0 -1 1">
-                      <geom type="box" size="0.004 0.02 0.01" rgba=".2 .2 1 1" mass="0.0001"/>
+                    <body name="gripper_lite_right" pos="-0.025 0 0"  quat="0 0 -1 1">
+                      <geom type="box" size="0.001 0.02 0.01" rgba=".2 .2 1 1" mass="0.0001"/>
                       <joint name="gripper_lite_right_joint" type="slide" axis="1 0 0" pos="0 0 0" damping="1"/>
-                      <body name="gripper2_lite_right" pos="0 0 0"  quat="0 0 0 1">
+                      <!-- <body name="gripper2_lite_right" pos="0 0 0"  quat="0 0 0 1">
                         <geom type="mesh"  mesh="grab_right" rgba=".2 .2 1 1" mass="0.0001"/>
-                      </body>
+                      </body> -->
                     </body>
 
                     <site name="attachment_site"/>
