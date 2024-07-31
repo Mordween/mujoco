@@ -11,7 +11,7 @@ import copy
 
 
 shaftPos = 0.015
-
+timeStep = 1e-3
 '''
 Same as robot_move_to but without drake solver
 only with roboticstoolbox-python
@@ -34,11 +34,11 @@ def move(viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 500):
         for steps in range(numberOfSteps):
 
             qpos = qt.q[steps]
-            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], data.ctrl[5], data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
+            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], data.ctrl[5], data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9], data.ctrl[10], data.ctrl[11]]
             """, qpos[5]"""
             mujoco.mj_step(model, data)
             viewer.sync()
-            time.sleep(1e-3)
+            time.sleep(timeStep)
 
 def translateY(viewer, robot, distance, numberOfSteps = 500):
         robot.q = [     data.joint('joint1').qpos, data.joint('joint2').qpos, 
@@ -48,15 +48,20 @@ def translateY(viewer, robot, distance, numberOfSteps = 500):
         Tep = sm.SE3.Ty(distance)* sm.SE3.OA([1, 0,1], [0, 1, 0])           # https://bdaiinstitute.github.io/spatialmath-python/3d_pose_SE3.html
         sol = robot.ik_LM(Tep)         # solve IK
 
-        qt = rtb.jtraj(robot.q, sol[0], numberOfSteps)
+        # qt = rtb.jtraj(robot.q, sol[0], numberOfSteps
+        qt = rtb.jtraj(robot.q, distance, numberOfSteps)
+        # print(data.body('link6').xquat)
+        # end_effector = data.body('link6').xpos
+        # end_effectorP = SE3(end_effector)
+        # qt = rtb.jtraj()
         for steps in range(numberOfSteps):
 
             qpos = qt.q[steps]
-            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], data.ctrl[5], data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
+            data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], data.ctrl[5], data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9], data.ctrl[10], data.ctrl[11]]
             """, qpos[5]"""
             mujoco.mj_step(model, data)
             viewer.sync()
-            time.sleep(1e-3)
+            time.sleep(timeStep)
 
 
 def crane_move_to(dest, n_sample):
@@ -80,16 +85,17 @@ def crane_move_to(dest, n_sample):
 
         mujoco.mj_step(model, data)
         viewer.sync()
-        time.sleep(1e-3)
+        time.sleep(timeStep)
 
 def wait(duration):
     time_pass = time.time() * 1000
     while(time.time()*1000 - time_pass < duration*1000):
         mujoco.mj_step(model, data)
         viewer.sync()
-        time.sleep(1e-3)
+        time.sleep(timeStep)
 
 lite6 = rtb.models.Lite6()
+lite6.grippers[0].tool = SE3(0, 0, 0.045)
 lite6.base = SE3(0.4, 0, 0)*SE3.Rz(pi/2)
 
 xml_path = 'mainV2.xml'
@@ -108,7 +114,7 @@ T_place_up = SE3(0.0, 2, 2)
 T_place = SE3(0, 2, 0.9)
 
 # position = {'x': 0.2, 'y': 0.3, 'z': 0.32}
-position = {'x': 0.3, 'y': 0.2, 'z': 0.32}              # X and Y axes are reversed 
+position = {'x': 0.2, 'y': 0.3, 'z': 0.030   }              # X and Y axes are reversed 
 positionShaft = {'x': 0.2, 'y': 0.285, 'z': 0}
 positionShaft2 = {'x': 0, 'y': 0.09, 'z': 0} # 0.1 - 0.02/2
 lite6Move = 0
@@ -116,7 +122,7 @@ shaftUp = 0
 craneMove = 0
 takeTheBrick = 0
 
-simulation_action = 'init'
+simulation_action = 'init' 
 
 with mujoco.viewer.launch_passive(model, data) as viewer:
     start = time.time()
@@ -128,14 +134,18 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
     viewer.cam.azimuth = 45
     print(dir(model.body('brick')))
 
+    mujoco.mj_step(model, data)
+    viewer.sync()
+
     # print(dir(data.body("gripper_left")))
     # data.body("gripper_left").xipos = [0, 0.1 ,0]
 
     while viewer.is_running(): #and i < sim_steps:
         
         match simulation_action :
+
             case 'init' :
-                # move(viewer, lite6, position, numberOfSteps=500)
+                move(viewer, lite6, position, numberOfSteps=500)
                 # robot_move_to(viewer, lite6, position)
                 simulation_action = 'rope_init'
 
@@ -164,14 +174,13 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                     simulation_action = 'take_brick'
 
             case 'take_brick' :
-                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0, 0.05, -0.05]
+                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6],  data.ctrl[7], data.ctrl[8], 0, 0.05, -0.05]
                 wait(5)
-                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0, 0.05, -0.05]
+                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6],  data.ctrl[7], data.ctrl[8], 0, 0.05, -0.05]
                 simulation_action = 'up_rope'
             
             case "up_rope":
                 positionZ = 0.15
-                # speed = 0.00005
                 speed = 0.0001
                 if (data.body('gripper_rope').xpos[2]< positionZ):
                     shaftPos -= speed
@@ -186,15 +195,12 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
             
             case 'move_robot':
                 quat = [0, 1, 0]
-                print(data.body('brick').xpos)
-                print(model.body('brick').pos)
-
 
                 position = {'x': data.body('brick').xpos[0]+0.04, 
                             'y': data.body('brick').xpos[1], 
                             'z': data.body('brick').xpos[2]} 
                  
-                print(position)
+                print("position of end effector", position)
                 move(viewer, lite6, position, quat, numberOfSteps=500)
                 wait(5)
                 simulation_action = 'turn_end_effector'
@@ -207,7 +213,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
                 if (data.body('link6').xquat[1] > -0.5):
                     data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], 1.57,
-                                 data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9]]
+                                 data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9], data.ctrl[10], data.ctrl[11]]
                 else:
                     simulation_action = 'get_closer'
                     wait(5)
@@ -230,7 +236,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
                     simulation_action = 'robot_move'
-                    data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], 0, 0, 0]
+                    data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], data.ctrl[7], data.ctrl[8], 0, 0, 0]
 
             case 'robot_move':
                 wait(2)
@@ -246,6 +252,6 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
         mujoco.mj_step(model, data)
         viewer.sync()
-        time.sleep(1e-3)
+        time.sleep(timeStep)
         i +=1
         
