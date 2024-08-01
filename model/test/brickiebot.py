@@ -103,7 +103,6 @@ def wait(duration):
 
 
 
-
 lite6 = rtb.models.Lite6()
 lite6.grippers[0].tool = SE3(0, 0, 0.045)
 lite6.base = SE3(0.4, 0, 0)*SE3.Rz(pi/2)
@@ -197,8 +196,6 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 data.ctrl = [   data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5],
                                 data.ctrl[6], data.ctrl[7], data.ctrl[8], 0,            0.05,         -0.05]
                 wait(5)
-                data.ctrl = [   data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5],
-                                data.ctrl[6], data.ctrl[7], data.ctrl[8], 0,            0.05,         -0.05]
                 simulation_action = 'up_rope'
             
             case "up_rope":
