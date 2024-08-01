@@ -91,7 +91,7 @@
 
     <!-- TODO mettre en place le gripper avec la pince qui bouge -->
 <!-- ################################################ GRIPPER ################################################# -->
-  <body name="gripper_rope" pos="0 0.015 0.02" quat="1 0 0 1">
+  <body name="gripper_rope" pos="0 0.015 0.02" quat="0 0 0 1">
     <joint name="gripper_jointX" type="slide" limited="false" actuatorfrclimited="false" axis="1 0 0"/>
     <joint name="gripper_jointY" type="slide" limited="false" actuatorfrclimited="false" axis="0 1 0"/>
     <joint name="gripper_jointZ" type="slide" limited="false" actuatorfrclimited="false" axis="0 0 1"/>
@@ -206,8 +206,8 @@
     <position joint="slider" ctrllimited="true" ctrlrange="-1 1"/> 
     <adhesion name="adhere_arm" body="payload" ctrlrange="0 1" gain="5"/>
 
-    <position name="gipper_left" joint="gripper_left_joint" ctrllimited="true" ctrlrange="0 0.02" kp="12"/> 
-    <position name="gripper_right" joint="gripper_right_joint" ctrllimited="true" ctrlrange="-0.02 0" kp="10"/> 
+    <position name="gipper_left" joint="gripper_left_joint" ctrllimited="true" ctrlrange="0 0.035" kp="12"/> 
+    <position name="gripper_right" joint="gripper_right_joint" ctrllimited="true" ctrlrange="-0.035 0" kp="10"/> 
   </actuator>
 
 
