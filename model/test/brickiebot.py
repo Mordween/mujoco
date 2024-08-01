@@ -12,7 +12,7 @@ import copy
 
 shaftPos = 0.015
 timeStep = 1e-3
-up_down_speed = 0.0001
+up_down_speed = 0.0002
 previous_time = time.time()
 '''
 Same as robot_move_to but without drake solver
@@ -114,6 +114,8 @@ xml_path = 'mainV2.xml'
 https://mujoco.readthedocs.io/en/latest/XMLreference.html#option
 """
 model = mujoco.MjModel.from_xml_path(xml_path)
+
+# mujoco.mjtFontScale.mjFONTSCALE_100       # TODO find a ways to add this
 # model.opt.timestep = 0.002
 model.opt.timestep = timeStep
 model.opt.iterations = 3
@@ -144,6 +146,9 @@ simulation_action = 'init'
 
 
 with mujoco.viewer.launch_passive(model, data) as viewer:
+
+    print("\n", dir(viewer.opt), "\n")
+
     start = time.time()
     i = 0
     viewer.cam.trackbodyid = 15
@@ -189,9 +194,11 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                     simulation_action = 'take_brick'
 
             case 'take_brick' :
-                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6],  data.ctrl[7], data.ctrl[8], 0, 0.05, -0.05]
+                data.ctrl = [   data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5],
+                                data.ctrl[6], data.ctrl[7], data.ctrl[8], 0,            0.05,         -0.05]
                 wait(5)
-                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6],  data.ctrl[7], data.ctrl[8], 0, 0.05, -0.05]
+                data.ctrl = [   data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5],
+                                data.ctrl[6], data.ctrl[7], data.ctrl[8], 0,            0.05,         -0.05]
                 simulation_action = 'up_rope'
             
             case "up_rope":
@@ -204,7 +211,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
             case 'shaft_rebase':
                 crane_move_to(positionShaft2, 1500)
-                wait(5)
+                wait(1)
                 simulation_action = 'move_robot'
             
             case 'move_robot':
@@ -216,7 +223,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                     
                 print("position of end effector", position)
                 move(viewer, lite6, position, quat, numberOfSteps=500)
-                wait(5)
+                wait(1)
                 simulation_action = 'turn_end_effector'
 
             case "turn_end_effector":
@@ -225,10 +232,10 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 # print("bool : ", (data.body('link6').xquat[1] < 0.5), "value : ", data.body('link6').xquat[1] )
 
                 # if (data.body('link6').xquat[1] > -0.5):
-                data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], 1.57,
-                                    data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9], data.ctrl[10], data.ctrl[11]]
+                data.ctrl = [   data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4],  1.57,
+                                data.ctrl[6], data.ctrl[7], data.ctrl[8], data.ctrl[9], data.ctrl[10], data.ctrl[11]]
                 # else:
-                simulation_action = 'get_closer'
+                simulation_action = 'release_brick'
                 wait(5)
 
             case "get_closer" :
@@ -240,7 +247,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                 # translateY(viewer, lite6, -0.04, 500)
                 # simulation_action = 'release_brick'
                 simulation_action = 'release_brick'
-                wait(5)
+                wait(1)
                                     
             case "release_brick" :
                 positionZ = 0.9
@@ -249,11 +256,12 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
                     shaftPos += speed
                     model.body('moving_box').pos[1] = model.body('beam').pos[1] + shaftPos
                 else:
+                    data.ctrl = [   data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5],
+                                    data.ctrl[6], data.ctrl[7], data.ctrl[8], 0,            0,            0]
                     simulation_action = 'robot_move'
-                    data.ctrl = [data.ctrl[0], data.ctrl[1], data.ctrl[2], data.ctrl[3], data.ctrl[4], data.ctrl[5], data.ctrl[6], data.ctrl[7], data.ctrl[8], 0, 0, 0]
 
             case 'robot_move':
-                wait(2)
+                wait(1)
                 # position = {'x': model.body('brick').pos[0], 'y': model.body('brick').pos[1], 'z': model.body('brick').pos[2]} 
                 # quat = [model.body('brick').quat[0], model.body('brick').quat[1], model.body('brick').quat[2]]
                 # move(viewer, lite6, position, quat, 500)
