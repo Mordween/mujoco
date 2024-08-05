@@ -3,18 +3,12 @@ import mujoco.viewer
 import time
 from math import pi
 import roboticstoolbox as rtb
-from spatialmath import SE3, Twist3
+from spatialmath import SE3
 import spatialmath as sm
 from spatialmath.base import *
-import numpy as np 
-import copy
 
 import parameters as param
 
-'''
-Same as robot_move_to but without drake solver
-only with roboticstoolbox-python
-'''
 
 def shaftPosUp():
     param.shaftPos -= param.up_down_speed
