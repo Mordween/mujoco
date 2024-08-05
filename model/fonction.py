@@ -18,7 +18,6 @@ only with roboticstoolbox-python
 
 def shaftPosUp():
     param.shaftPos -= param.up_down_speed
-    print(param.shaftPos)
 
 def shaftPosDown():
     param.shaftPos += param.up_down_speed
@@ -93,7 +92,6 @@ class Simulation():
     def crane_move_to(self, viewer, dest, n_sample):
         T_dest = SE3(dest['x'], dest['y'], dest['z'])
         traj = rtb.ctraj(SE3(self.model.body('end_effector').pos), T_dest, n_sample)
-        print("moving box : ", param.shaftPos)
         previous_time = time.time()
         for i in range(n_sample ):
             crane_body_pos = SE3.Tx(traj[i].x)

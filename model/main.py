@@ -1,5 +1,3 @@
-import parameters as param
-
 from fonction import *
 
 
@@ -17,9 +15,12 @@ T_place_up = SE3(0.0, 2, 2)
 T_place = SE3(0, 2, 0.9)
 
 # position = {'x': 0.2, 'y': 0.3, 'z': 0.32}
-position = {'x': 0.2, 'y': 0.3, 'z': 0.030 }              # X and Y axes are reversed 
-positionShaft = {'x': 0.2, 'y': 0.285, 'z': 0}
+position = {'x': 0.2, 'y': 0.3, 'z': 0.030 } 
+positionShaft = {'x': 0.2, 'y': 0.295, 'z': 0}      # the value is not 0.3 because you have to consider the radius of the shaft
+# 0.285
 positionShaft2 = {'x': 0, 'y': 0.09, 'z': 0} # 0.1 - 0.02/2
+positionShaft3 = {'x': 0, 'y': 0.18, 'z': 0}
+
 lite6Move = 0
 shaftUp = 0
 craneMove = 0
@@ -29,7 +30,6 @@ simulation_action = 'init'
 
 with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
     start = time.time()
-    i = 0
     viewer.cam.trackbodyid = 15
     viewer.cam.distance = 1.5
     viewer.cam.lookat = [0, 0, 0]
@@ -74,9 +74,9 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                     simulation_action = 'take_brick'
 
             case 'take_brick' :
-                sim.data.ctrl = [sim.data.ctrl[0],sim.data.ctrl[1],sim.data.ctrl[2],sim.data.ctrl[3],sim.data.ctrl[4],sim.data.ctrl[5],sim.data.ctrl[6], sim.data.ctrl[7],sim.data.ctrl[8], 0, 0.05, -0.05]
-                sim.wait(viewer, 5)
-                sim.data.ctrl = [sim.data.ctrl[0],sim.data.ctrl[1],sim.data.ctrl[2],sim.data.ctrl[3],sim.data.ctrl[4],sim.data.ctrl[5],sim.data.ctrl[6], sim.data.ctrl[7],sim.data.ctrl[8], 0, 0.05, -0.05]
+                sim.wait(viewer, 2)
+                sim.data.ctrl = [sim.data.ctrl[0],sim.data.ctrl[1],sim.data.ctrl[2],sim.data.ctrl[3],sim.data.ctrl[4],sim.data.ctrl[5],sim.data.ctrl[6], sim.data.ctrl[7],sim.data.ctrl[8], 0, 0.02, -0.02]
+                sim.wait(viewer, 2)
                 simulation_action = 'up_rope'
             
             case "up_rope":
@@ -90,28 +90,31 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
             case 'shaft_rebase':
                 sim.crane_move_to(viewer, positionShaft2, 1500)
                 sim.wait(viewer, 5)
-                simulation_action = 'move_robot'
+                simulation_action = 'turn_end_effector'
             
             case 'move_robot':
-                quat = [0, 1, 0]
+                quat = [1, 0, 0]
 
-                position = {'x':sim.data.body('brick').xpos[0]+0.04, 
-                            'y':sim.data.body('brick').xpos[1], 
+                position = {'x':sim.data.body('brick').xpos[0], 
+                            'y':sim.data.body('brick').xpos[1]+0.01, 
                             'z':sim.data.body('brick').xpos[2]} 
                  
                 sim.move(viewer, lite6, position, quat, numberOfSteps=500)
                 sim.wait(viewer, 5)
-                simulation_action = 'turn_end_effector'
+                simulation_action = 'lite_take'
 
 
             case "turn_end_effector":
                 
-                sim.data.ctrl = [sim.data.ctrl[0],sim.data.ctrl[1],sim.data.ctrl[2],sim.data.ctrl[3],sim.data.ctrl[4], 1.57,
-                                 sim.data.ctrl[6],sim.data.ctrl[7],sim.data.ctrl[8],sim.data.ctrl[9],sim.data.ctrl[10],sim.data.ctrl[11]]
-                simulation_action = 'get_closer'
+                sim.data.ctrl = [sim.data.ctrl[0],sim.data.ctrl[1],sim.data.ctrl[2],sim.data.ctrl[3],sim.data.ctrl[4], 0.92,
+                                 0.0045,-0.0045,sim.data.ctrl[8],sim.data.ctrl[9],sim.data.ctrl[10],sim.data.ctrl[11]]
+                simulation_action = 'move_robot'
                 sim.wait(viewer, 5)
 
-            case "get_closer" :
+            case "lite_take" :
+                sim.data.ctrl = [sim.data.ctrl[0],sim.data.ctrl[1],sim.data.ctrl[2],sim.data.ctrl[3],sim.data.ctrl[4], sim.data.ctrl[5],
+                                 0.01,-0.01,sim.data.ctrl[8],sim.data.ctrl[9],sim.data.ctrl[10],sim.data.ctrl[11]]
+                sim.wait(viewer, 2)
                 # quat = [0, 1, 0]
                 # position = {'x':sim.data.body('brick').xpos[0], 
                 #             'y':sim.data.body('brick').xpos[1], 
@@ -119,30 +122,29 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 # move(viewer, lite6, position, quat, numberOfSteps=500)
                 # translateY(viewer, lite6, -0.04, 500)
                 # simulation_action = 'release_brick'
-                simulation_action = 'end'
-                sim.wait(20)
+                simulation_action = 'release_brick'
+                sim.wait(viewer, 5)
                                    
             case "release_brick" :
-                positionZ = 0.9
-                speed = 0.0001
-                if (sim.data.body('gripper_rope').xpos[2]> positionZ):
-                    shaftPosDown()
-                    model.body('moving_box').pos[1] = model.body('beam').pos[1] + param.shaftPos
-                else:
-                    simulation_action = 'robot_move'
-                    sim.data.ctrl = [sim.data.ctrl[0],sim.data.ctrl[1],sim.data.ctrl[2],sim.data.ctrl[3],sim.data.ctrl[4],sim.data.ctrl[5],sim.data.ctrl[6],sim.data.ctrl[7],sim.data.ctrl[8], 0, 0, 0]
+                sim.data.ctrl = [sim.data.ctrl[0],sim.data.ctrl[1],sim.data.ctrl[2],sim.data.ctrl[3],sim.data.ctrl[4], sim.data.ctrl[5],
+                                 sim.data.ctrl[6],sim.data.ctrl[7],sim.data.ctrl[8],sim.data.ctrl[9], 0, 0]
+                simulation_action = 'robot_move'
 
             case 'robot_move':
                 sim.wait(viewer, 2)
+                sim.crane_move_to(viewer, positionShaft3, 1500)
+                sim.wait(viewer, 2)
+
+
                 # position = {'x': model.body('brick').pos[0], 'y': model.body('brick').pos[1], 'z': model.body('brick').pos[2]} 
                 # quat = [model.body('brick').quat[0], model.body('brick').quat[1], model.body('brick').quat[2]]
                 # move(viewer, lite6, position, quat, 500)
-                simulation_action = 'endV2'
+                simulation_action = 'end'
             
             case 'end' : 
-                print(sim.data.body('moving_box').xpos)
+                print("durée de la simulation", round(time.time()-start), " s")
+                simulation_action = 'endV2'
 
-        # print(data.body('link6').xpos)  # position of end effector
 
         mujoco.mj_step(model,sim.data)
         viewer.sync()
