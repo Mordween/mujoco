@@ -19,18 +19,18 @@ def shaftPosDown():
 class Simulation():
     def __init__(self, model, robot):
         self.model = model
-        self.data = data = mujoco.MjData(model)
+        self.data = mujoco.MjData(model)
         self.robot = robot
 
         self.model.opt.timestep     = param.timeStep
         self.model.opt.iterations   = param.modelIterations
         self.model.opt.solver       = param.modelSolver   # 0 : PGS,  1 : CG, 2 : Newton
 
-        self.model.body('link_base').pos = [0.4, 0, 0]
-        self.model.body('link_base').quat = [1, 0, 0, 1]
+        self.model.body('link_base').pos    = param.robotPosition
+        self.model.body('link_base').quat   = param.robotRotation
 
-        self.robot.grippers[0].tool = SE3(0, 0, 0.045)
-        self.robot.base = SE3(0.4, 0, 0)*SE3.Rz(pi/2)
+        self.robot.grippers[0].tool = SE3(0, 0, param.gripperSize)
+        self.robot.base = SE3(param.robotPosition)*SE3.Rz(pi/2)
 
 
     def move(self, viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 500):

@@ -17,6 +17,14 @@ modelTimestep = timeStep
 modelIterations = 1000
 modelSolver = 1         # 0 : PGS,  1 : CG, 2 : Newton
 
+
+"""
+Robot parameter
+"""
+robotPosition = [0.4, 0, 0]
+robotRotation = [1, 0, 0, 1]
+gripperSize = 0.045
+
 """
 Not yet release : https://mujoco.readthedocs.io/en/latest/changelog.html
 """
