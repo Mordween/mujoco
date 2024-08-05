@@ -178,29 +178,6 @@
     <weld body1="gripper_rope" body2="payload" active="true" anchor="0 0 0" torquescale="0"/>
   </equality>
 
-  <!-- <tendon>
-    <spatial name="site_0_0" limited="true" width=".001" springlength="0.5" range="0 0.05" solimplimit="0.001 0.001 0.001 0.5 1" solreflimit="-100 -0" damping="50">
-      <site site="sphere_0"/>
-      <site site="gripper_0_0"/>
-    </spatial>
-
-    <spatial name="site_0_1" limited="true" width=".001" springlength="0.5" range="0 0.2" solimplimit="0.001 0.001 0.001 0.5 1" solreflimit="-100 -0" damping="50">
-      <site site="sphere_0"/>
-      <site site="gripper_0_1"/>
-    </spatial>
-
-    <spatial name="site_1_0" limited="true" width=".001" springlength="0.5" range="0 0.2" solimplimit="0.001 0.001 0.001 0.5 1" solreflimit="-100 -0" damping="50">
-      <site site="sphere_0"/>
-      <site site="gripper_1_0"/>
-    </spatial>
-
-    <spatial name="site_1_1" limited="true" width=".001" springlength="0.5" range="0 0.2" solimplimit="0.001 0.001 0.001 0.5 1" solreflimit="-100 -0" damping="50">
-      <site site="sphere_0"/>
-      <site site="gripper_1_1"/>
-    </spatial>
-
-  </tendon> -->
-
 <!-- gripper_rope -->
   <actuator>
     <position joint="slider" ctrllimited="true" ctrlrange="-1 1"/> 
