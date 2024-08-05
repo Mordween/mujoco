@@ -22,9 +22,9 @@ class Simulation():
         self.data = data = mujoco.MjData(model)
         self.robot = robot
 
-        self.model.opt.timestep = 0.002
-        self.model.opt.iterations = 1000
-        self.model.opt.solver = 1   # 0 : PGS,  1 : CG, 2 : Newton
+        self.model.opt.timestep     = param.timeStep
+        self.model.opt.iterations   = param.modelIterations
+        self.model.opt.solver       = param.modelSolver   # 0 : PGS,  1 : CG, 2 : Newton
 
         self.model.body('link_base').pos = [0.4, 0, 0]
         self.model.body('link_base').quat = [1, 0, 0, 1]
@@ -51,12 +51,16 @@ class Simulation():
 
             qpos = qt.q[steps]
             self.data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], self.data.ctrl[5], self.data.ctrl[6], self.data.ctrl[7], self.data.ctrl[8], self.data.ctrl[9], self.data.ctrl[10], self.data.ctrl[11]]
-            """, qpos[5]"""
+
             mujoco.mj_step(self.model, self.data)
             viewer.sync()
             time.sleep(max(0, param.timeStep-(time.time()-previous_time)))
             previous_time = time.time()
 
+
+    """
+    Not use 
+    """
     def translateY(self, viewer, robot, distance, numberOfSteps = 500):
             robot.q = [     self.data.joint('joint1').qpos, self.data.joint('joint2').qpos, 
                             self.data.joint('joint3').qpos, self.data.joint('joint4').qpos, 
