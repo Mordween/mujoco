@@ -34,7 +34,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 positionZ = 0.16
                 if (sim.data.body('gripper_rope').xpos[2]< positionZ):
                     shaftPosUp()
-                    model.body('moving_box').pos[1] = model.body('beam').pos[1] + param.shaftPos
+                    sim.model.body('moving_box').pos[1] = sim.model.body('beam').pos[1] + param.shaftPos
                 else:
                     simulation_action = 'shaftMove'
 
@@ -47,7 +47,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 positionZ = 0.046
                 if (sim.data.body('gripper_rope').xpos[2]> positionZ):
                     shaftPosDown()
-                    model.body('moving_box').pos[1] = model.body('beam').pos[1] + param.shaftPos
+                    sim.model.body('moving_box').pos[1] = sim.model.body('beam').pos[1] + param.shaftPos
                 else:
                     simulation_action = 'take_brick'
 
@@ -62,7 +62,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 positionZ = 0.15
                 if (sim.data.body('gripper_rope').xpos[2]< positionZ):
                     shaftPosUp()
-                    model.body('moving_box').pos[1] = model.body('beam').pos[1] + param.shaftPos
+                    sim.model.body('moving_box').pos[1] = sim.model.body('beam').pos[1] + param.shaftPos
                 else:
                     simulation_action = 'shaft_rebase'
 
@@ -120,7 +120,8 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 simulation_action = 'endV2'
 
 
-        mujoco.mj_step(model,sim.data)
+        # print(sim.data.sensordata) # Sensor data, currently it's juste IMU [x, y, z]
+        mujoco.mj_step(sim.model,sim.data)
         viewer.sync()
         time.sleep(max(0, param.timeStep-(time.time()-previous_time)))
         previous_time = time.time()
