@@ -69,17 +69,34 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
             case 'shaft_rebase':
                 sim.crane_move_to(viewer, positionShaft2, 1500)
                 sim.wait(viewer, 2)
-                simulation_action = 'turn_end_effector'
+                simulation_action = 'move_robot'
             
             case 'move_robot':
-                quat = [1, 0, 0]
+                quat = [0, 1, 0]
 
                 position = {'x':sim.data.body('brick').xpos[0], 
-                            'y':sim.data.body('brick').xpos[1]+0.01, 
-                            'z':sim.data.body('brick').xpos[2]} 
-                 
+                            'y':sim.data.body('brick').xpos[1]-0.1, 
+                            'z':sim.data.body('brick').xpos[2]+0.1} 
+                
                 sim.move(viewer, lite6, position, quat, numberOfSteps=500)
                 sim.wait(viewer, 2)
+                simulation_action = 'get_closer'
+
+            case "get_closer":
+                quat = [0, 1, 0]
+                position2 = {'x':sim.data.body('brick').xpos[0], 
+                             'y':sim.data.body('brick').xpos[1]-0.1, 
+                             'z':sim.data.body('brick').xpos[2]}
+                
+                position3 = {'x':sim.data.body('brick').xpos[0], 
+                             'y':sim.data.body('brick').xpos[1], 
+                             'z':sim.data.body('brick').xpos[2]}
+                
+                sim.move(viewer, lite6, position2, quat, numberOfSteps=500)
+                sim.wait(viewer, 2)
+                sim.move(viewer, lite6, position3, quat, numberOfSteps=500)
+                sim.wait(viewer, 2)
+                
                 simulation_action = 'lite_take'
 
             case "turn_end_effector":

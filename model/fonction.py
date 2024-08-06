@@ -35,22 +35,26 @@ class Simulation():
 
     def move(self, viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 500):
         positionR = [   position['y'] - self.data.body('link_base').xpos[1],
-                    - (position['x'] - self.data.body('link_base').xpos[0]),  
+                     - (position['x'] - self.data.body('link_base').xpos[0]),  
                         position['z'] - self.data.body('link_base').xpos[2]]
         
-        robot.q = [     self.data.joint('joint1').qpos, self.data.joint('joint2').qpos, 
-                        self.data.joint('joint3').qpos, self.data.joint('joint4').qpos, 
-                        self.data.joint('joint5').qpos, self.data.joint('joint6').qpos]
+        # robot.q = [     self.data.joint('joint1').qpos, self.data.joint('joint2').qpos, 
+        #                 self.data.joint('joint3').qpos, self.data.joint('joint4').qpos, 
+        #                 self.data.joint('joint5').qpos, self.data.joint('joint6').qpos]
         
-        Tep = sm.SE3.Trans(positionR[0], positionR[1], positionR[2]) * sm.SE3.OA([1, 0,1], quat)
-        sol = robot.ik_LM(Tep)         # solve IK
+        # Tep = sm.SE3.Trans(positionR[0], positionR[1], positionR[2]) * sm.SE3.OA([1, 0,1], quat)
+        # sol = robot.ik_LM(Tep)         # solve IK
 
-        qt = rtb.jtraj(robot.q, sol[0], numberOfSteps)
+        # qt = rtb.jtraj(robot.q, sol[0], numberOfSteps)
+        Tep = sm.SE3(positionR[0], positionR[1], positionR[2]) * sm.SE3.RPY([quat[0]*90, quat[1]*90, quat[2]*90], order="xyz", unit="deg")
+        ctraj = rtb.ctraj(robot.fkine(robot.q), Tep, numberOfSteps)
+        jtraj = robot.ikine_LM(ctraj, q0 = robot.q)
         previous_time = time.time()
-        for steps in range(numberOfSteps):
 
-            qpos = qt.q[steps]
-            self.data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], self.data.ctrl[5], self.data.ctrl[6], self.data.ctrl[7], self.data.ctrl[8], self.data.ctrl[9], self.data.ctrl[10], self.data.ctrl[11]]
+        for q in jtraj.q:
+            qpos = q
+            robot.q = q
+            self.data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], self.data.ctrl[6], self.data.ctrl[7], self.data.ctrl[8], self.data.ctrl[9], self.data.ctrl[10], self.data.ctrl[11]]
 
             mujoco.mj_step(self.model, self.data)
             viewer.sync()

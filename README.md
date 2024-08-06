@@ -5,7 +5,8 @@ This repositiory was created for Fari's Brickiebot project with MuJoCo.
 cd model
 python main.py
 ```
-We tested the code only on Ubuntu 20.04 and windows 10
+
+**WARNING:** This version only works on Linux. The `spatialmath` library behaves differently on Windows, leading to unexpected results.
 
 <br>
 
