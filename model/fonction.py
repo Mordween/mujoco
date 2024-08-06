@@ -46,7 +46,8 @@ class Simulation():
         # sol = robot.ik_LM(Tep)         # solve IK
 
         # qt = rtb.jtraj(robot.q, sol[0], numberOfSteps)
-        Tep = sm.SE3(positionR[0], positionR[1], positionR[2]) * sm.SE3.RPY([quat[0]*90, quat[1]*90, quat[2]*90], order="xyz", unit="deg")
+        # Tep = sm.SE3(positionR[0], positionR[1], positionR[2]) * sm.SE3.RPY([quat[0]*90, quat[1]*90, quat[2]*90], order="xyz", unit="deg")
+        Tep = sm.SE3(positionR[0], positionR[1], positionR[2]) * sm.SE3.RPY([0,90,0], order="xyz", unit="deg")
         ctraj = rtb.ctraj(robot.fkine(robot.q), Tep, numberOfSteps)
         jtraj = robot.ikine_LM(ctraj, q0 = robot.q)
         previous_time = time.time()
@@ -60,35 +61,6 @@ class Simulation():
             viewer.sync()
             time.sleep(max(0, param.timeStep-(time.time()-previous_time)))
             previous_time = time.time()
-
-
-    """
-    Not use 
-    """
-    def translateY(self, viewer, robot, distance, numberOfSteps = 500):
-            robot.q = [     self.data.joint('joint1').qpos, self.data.joint('joint2').qpos, 
-                            self.data.joint('joint3').qpos, self.data.joint('joint4').qpos, 
-                            self.data.joint('joint5').qpos, self.data.joint('joint6').qpos]
-            
-            Tep = sm.SE3.Ty(distance)* sm.SE3.OA([1, 0,1], [0, 1, 0])           # https://bdaiinstitute.github.io/spatialmath-python/3d_pose_SE3.html
-            sol = robot.ik_LM(Tep)         # solve IK
-
-            # qt = rtb.jtraj(robot.q, sol[0], numberOfSteps
-            qt = rtb.jtraj(robot.q, distance, numberOfSteps)
-            # print(data.body('link6').xquat)
-            # end_effector = data.body('link6').xpos
-            # end_effectorP = SE3(end_effector)
-            # qt = rtb.jtraj()
-            previous_time = time.time()
-            for steps in range(numberOfSteps):
-
-                qpos = qt.q[steps]
-                self.data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], self.data.ctrl[5], self.data.ctrl[6], self.data.ctrl[7], self.data.ctrl[8], self.data.ctrl[9], self.data.ctrl[10], self.data.ctrl[11]]
-                """, qpos[5]"""
-                mujoco.mj_step(self.model, self.data)
-                viewer.sync()
-                time.sleep(max(0, param.timeStep-(time.time()-previous_time)))
-                previous_time = time.time()
 
 
     def crane_move_to(self, viewer, dest, n_sample):
@@ -120,3 +92,4 @@ class Simulation():
             viewer.sync()
             time.sleep(max(0, param.timeStep-(time.time()-previous_time)))
             previous_time = time.time()
+()

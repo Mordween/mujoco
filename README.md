@@ -1,3 +1,5 @@
+[![Powered by the Spatial Math Toolbox](https://github.com/bdaiinstitute/spatialmath-python/raw/master/.github/svg/sm_powered.min.svg)](https://github.com/bdaiinstitute/spatialmath-python)
+
 # MuJoCo test with Lite6
 This repositiory was created for Fari's Brickiebot project with MuJoCo. 
 
@@ -5,8 +7,7 @@ This repositiory was created for Fari's Brickiebot project with MuJoCo.
 cd model
 python main.py
 ```
-
-**WARNING:** This version only works on Linux. The `spatialmath` library behaves differently on Windows, leading to unexpected results.
+We tested the code only on Ubuntu 20.04 and windows 10
 
 <br>
 

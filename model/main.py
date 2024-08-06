@@ -78,7 +78,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                             'y':sim.data.body('brick').xpos[1]-0.1, 
                             'z':sim.data.body('brick').xpos[2]+0.1} 
                 
-                sim.move(viewer, lite6, position, quat, numberOfSteps=500)
+                sim.move(viewer, lite6, position, quat, numberOfSteps=100)
                 sim.wait(viewer, 2)
                 simulation_action = 'get_closer'
 
@@ -92,9 +92,9 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                              'y':sim.data.body('brick').xpos[1], 
                              'z':sim.data.body('brick').xpos[2]}
                 
-                sim.move(viewer, lite6, position2, quat, numberOfSteps=500)
+                sim.move(viewer, lite6, position2, quat, numberOfSteps=10)
                 sim.wait(viewer, 2)
-                sim.move(viewer, lite6, position3, quat, numberOfSteps=500)
+                sim.move(viewer, lite6, position3, quat, numberOfSteps=10)
                 sim.wait(viewer, 2)
                 
                 simulation_action = 'lite_take'
