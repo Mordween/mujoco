@@ -55,8 +55,8 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
             case 'take_brick' :
                 sim.wait(viewer, 2)
                 sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
-                                 sim.data.ctrl[6], sim.data.ctrl[7], sim.data.ctrl[8], 0, 0.02, -0.02]
-                sim.wait(viewer, 2)
+                                 sim.data.ctrl[6], sim.data.ctrl[7], sim.data.ctrl[8], 0, 0.032, -0.032]
+                sim.wait(viewer, 1)
                 simulation_action = 'up_rope'
             
             case "up_rope":
@@ -96,7 +96,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 if(position['y']<sim.data.body('brick').xpos[1]):
                     position = {'x':sim.data.body('brick').xpos[0], 
                                 'y':sim.data.body('brick').xpos[1]-0.1+0.01*i, 
-                                'z':sim.data.body('brick').xpos[2]}
+                                'z':sim.data.body('brick').xpos[2]+0.005}
                     print(position)
                     
                     sim.move(viewer, lite6, position, quat, numberOfSteps=3)
