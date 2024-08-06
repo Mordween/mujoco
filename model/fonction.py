@@ -33,7 +33,7 @@ class Simulation():
         self.robot.base = SE3(param.robotPosition)*SE3.Rz(pi/2)
 
 
-    def move(self, viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 500):
+    def move(self, viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 100):
         positionR = [   position['y'] - self.data.body('link_base').xpos[1],
                      - (position['x'] - self.data.body('link_base').xpos[0]),  
                         position['z'] - self.data.body('link_base').xpos[2]]
@@ -46,8 +46,8 @@ class Simulation():
         # sol = robot.ik_LM(Tep)         # solve IK
 
         # qt = rtb.jtraj(robot.q, sol[0], numberOfSteps)
-        # Tep = sm.SE3(positionR[0], positionR[1], positionR[2]) * sm.SE3.RPY([quat[0]*90, quat[1]*90, quat[2]*90], order="xyz", unit="deg")
-        Tep = sm.SE3(positionR[0], positionR[1], positionR[2]) * sm.SE3.RPY([0,90,0], order="xyz", unit="deg")
+        Tep = sm.SE3(positionR[0], positionR[1], positionR[2]) * sm.SE3.RPY([quat[0]*90, quat[1]*90, quat[2]*90], order="xyz", unit="deg")
+        # Tep = sm.SE3(positionR[0], positionR[1], positionR[2]) * sm.SE3.RPY([0,90,0], order="xyz", unit="deg")
         ctraj = rtb.ctraj(robot.fkine(robot.q), Tep, numberOfSteps)
         jtraj = robot.ikine_LM(ctraj, q0 = robot.q)
         previous_time = time.time()

@@ -20,6 +20,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
     viewer.cam.elevation = -45
     viewer.cam.azimuth = 45
 
+    i = 1
     mujoco.mj_step(sim.model, sim.data)
     viewer.sync()
 
@@ -72,32 +73,37 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 simulation_action = 'move_robot'
             
             case 'move_robot':
+                sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
+                                 0, 0, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
                 quat = [0, 1, 0]
 
                 position = {'x':sim.data.body('brick').xpos[0], 
-                            'y':sim.data.body('brick').xpos[1]-0.1, 
-                            'z':sim.data.body('brick').xpos[2]+0.1} 
+                            'y':sim.data.body('brick').xpos[1]-0.15, 
+                            'z':sim.data.body('brick').xpos[2]+0.15} 
                 
                 sim.move(viewer, lite6, position, quat, numberOfSteps=100)
+                sim.wait(viewer, 2)
+                position2 = {'x':sim.data.body('brick').xpos[0], 
+                             'y':sim.data.body('brick').xpos[1]-0.1, 
+                             'z':sim.data.body('brick').xpos[2]}
+                
+                sim.move(viewer, lite6, position2, quat, numberOfSteps=10)
                 sim.wait(viewer, 2)
                 simulation_action = 'get_closer'
 
             case "get_closer":
                 quat = [0, 1, 0]
-                position2 = {'x':sim.data.body('brick').xpos[0], 
-                             'y':sim.data.body('brick').xpos[1]-0.1, 
-                             'z':sim.data.body('brick').xpos[2]}
-                
-                position3 = {'x':sim.data.body('brick').xpos[0], 
-                             'y':sim.data.body('brick').xpos[1], 
-                             'z':sim.data.body('brick').xpos[2]}
-                
-                sim.move(viewer, lite6, position2, quat, numberOfSteps=10)
-                sim.wait(viewer, 2)
-                sim.move(viewer, lite6, position3, quat, numberOfSteps=10)
-                sim.wait(viewer, 2)
-                
-                simulation_action = 'lite_take'
+                if(position['y']<sim.data.body('brick').xpos[1]):
+                    position = {'x':sim.data.body('brick').xpos[0], 
+                                'y':sim.data.body('brick').xpos[1]-0.1+0.01*i, 
+                                'z':sim.data.body('brick').xpos[2]}
+                    print(position)
+                    
+                    sim.move(viewer, lite6, position, quat, numberOfSteps=3)
+                    sim.wait(viewer, 0.15)
+                    i += 1
+                else :
+                    simulation_action = 'lite_take'
 
             case "turn_end_effector":
                 
