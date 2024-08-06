@@ -74,7 +74,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
             
             case 'move_robot':
                 sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
-                                 0, 0, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
+                                 0.001, -0.001, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
                 quat = [0, 1, 0]
 
                 position = {'x':sim.data.body('brick').xpos[0], 

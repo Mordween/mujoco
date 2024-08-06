@@ -99,6 +99,9 @@
                       diaginertia="0.000148148 8.57757e-05 7.71412e-05"/>
                     <geom class="visual" mesh="gripper_without_head" material="silver"/>
                     <geom class="collision" mesh="gripper_c"/> -->
+                    <body name="CAM" pos="0 0 -0.025" quat="0 -1 0 1">
+                      <camera name="lite_cam" quat="0 1 0 1" pos="0 0 0"/>
+                    </body>
 
                     <body name="gripper_lite_left" pos="0.025 0 0"  quat="0 0 -1 1">
                       <geom type="box" size="0.001 0.02 0.01" rgba=".2 .2 1 1" mass="0.0001"/>

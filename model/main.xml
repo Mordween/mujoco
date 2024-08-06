@@ -30,6 +30,9 @@
 
       <mesh name="grab1_left"    scale="1 1 2" file="grab1_left.stl"/>
       <mesh name="grab1_right"   scale="1 1 2" file="grab1_right.stl"/>
+
+      <texture name="arUcoPic" type="2d" file="arUco.png" />
+      <material name="arUco" texture="arUcoPic"/>
     </asset>
 
 
@@ -98,7 +101,9 @@
     <joint name="gripper_jointX" type="slide" limited="false" actuatorfrclimited="false" axis="1 0 0"/>
     <joint name="gripper_jointY" type="slide" limited="false" actuatorfrclimited="false" axis="0 1 0"/>
     <joint name="gripper_jointZ" type="slide" limited="false" actuatorfrclimited="false" axis="0 0 1"/>
+
     <geom type="box" size="0.05 0.02 0.001" rgba=".8 .8 .8 1" mass="0.0001"/>
+    <geom type="box" size="0.02 0.02 0.001" pos="0 0 0.0001" material="arUco" rgba=".8 .8 .8 1" mass="0.0001"/>
 
     <body name="gripper_left" pos="0.05 0 -0.02"  quat="0 0 1 1">
       <geom type="box" size="0.004 0.02 0.01" rgba=".2 .2 1 1" mass="0.0001"/>
