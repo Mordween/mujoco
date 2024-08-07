@@ -29,7 +29,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
         
         match simulation_action :
             case 'init' :
-                simulation_action = 'rope_init'
+                simulation_action = 'Nrope_init'
 
             case 'rope_init':
                 positionZ = 0.16

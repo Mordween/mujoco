@@ -29,6 +29,7 @@ class Simulation():
         self.model.body('link_base').pos    = param.robotPosition
         self.model.body('link_base').quat   = param.robotRotation
 
+
         self.robot.grippers[0].tool = SE3(0, 0, param.gripperSize)
         self.robot.base = SE3(param.robotPosition)*SE3.Rz(pi/2)
 
