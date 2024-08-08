@@ -19,7 +19,6 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
     viewer.cam.lookat = [0, 0, 0]
     viewer.cam.elevation = -45
     viewer.cam.azimuth = 45
-
     i = 1
     mujoco.mj_step(sim.model, sim.data)
     viewer.sync()
@@ -29,7 +28,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
         
         match simulation_action :
             case 'init' :
-                simulation_action = 'Nrope_init'
+                simulation_action = 'rope_init'
 
             case 'rope_init':
                 positionZ = 0.16
