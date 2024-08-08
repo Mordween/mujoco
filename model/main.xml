@@ -1,8 +1,8 @@
 <mujoco model="Brickiebot">
 
   <include file="scene.xml"/>
-  <include file="assets/assets/ufactory_lite6/lite6V2.xml"/>
-  <!-- <include file="assets/assets/mycobot_280_pi/mycobot.xml"/> -->
+  <!-- <include file="assets/assets/ufactory_lite6/lite6V2.xml"/> -->
+  <include file="assets/assets/mycobot_280_pi/mycobot.xml"/>
   <option timestep="0.001" jacobian="dense" noslip_iterations="5"/>
   <option><flag multiccd="enable"/> </option>
   <size nconmax="500" njmax="1500" nkey="1"/>

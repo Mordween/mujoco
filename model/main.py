@@ -28,6 +28,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
         
         match simulation_action :
             case 'init' :
+                # print(dir(sim.data.joint('joint3_to_joint2')))
                 simulation_action = 'rope_init'
 
             case 'rope_init':
@@ -53,8 +54,9 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
 
             case 'take_brick' :
                 sim.wait(viewer, 2)
-                sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
-                                 sim.data.ctrl[6], sim.data.ctrl[7], sim.data.ctrl[8], 0, 0.032, -0.032]
+                # sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
+                #                  sim.data.ctrl[6], sim.data.ctrl[7], sim.data.ctrl[8], 0, 0.032, -0.032]
+                sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], 0, 0.032, -0.032]
                 sim.wait(viewer, 1)
                 simulation_action = 'up_rope'
             
@@ -72,8 +74,9 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 simulation_action = 'move_robot'
             
             case 'move_robot':
-                sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
-                                 0.001, -0.001, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
+                # sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
+                #                  0.001, -0.001, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
+                sim.data.ctrl = [0.001, -0.001, sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5]]
                 quat = [0, 1, 0]
 
                 position = {'x':sim.data.body('brick').xpos[0], 
@@ -106,14 +109,16 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
 
             case "turn_end_effector":
                 
-                sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], 0.92,
-                                 0.0045, -0.0045, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
+                # sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], 0.92,
+                #                  0.0045, -0.0045, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
+                sim.data.ctrl = [0.0045, -0.0045, sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5]]
                 simulation_action = 'move_robot'
                 sim.wait(viewer, 2)
 
             case "lite_take" :
-                sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
-                                 0.01, -0.01, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
+                # sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
+                #                  0.01, -0.01, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
+                sim.data.ctrl = [0.01, -0.01, sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5]]
                 sim.wait(viewer, 2)
                 # quat = [0, 1, 0]
                 # position = {'x':sim.data.body('brick').xpos[0], 
@@ -126,8 +131,9 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 sim.wait(viewer, 1)
                                    
             case "release_brick" :
-                sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
-                                 sim.data.ctrl[6], sim.data.ctrl[7], sim.data.ctrl[8], sim.data.ctrl[9], 0, 0]
+                # sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
+                #                  sim.data.ctrl[6], sim.data.ctrl[7], sim.data.ctrl[8], sim.data.ctrl[9], 0, 0]
+                sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], 0, 0]
                 simulation_action = 'robot_move'
 
             case 'robot_move':

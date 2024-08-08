@@ -56,8 +56,13 @@ class Simulation():
         for q in jtraj.q:
             qpos = q
             robot.q = q
-            self.data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], self.data.ctrl[6], self.data.ctrl[7], self.data.ctrl[8], self.data.ctrl[9], self.data.ctrl[10], self.data.ctrl[11]]
-
+            # self.data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], self.data.ctrl[6], self.data.ctrl[7], self.data.ctrl[8], self.data.ctrl[9], self.data.ctrl[10], self.data.ctrl[11]]
+            self.data.joint('joint1').qpos = qpos[0]
+            self.data.joint('joint2').qpos = qpos[1]
+            self.data.joint('joint3').qpos = qpos[2]
+            self.data.joint('joint4').qpos = qpos[3]
+            self.data.joint('joint5').qpos = qpos[4]
+            self.data.joint('joint6').qpos = qpos[5]
             mujoco.mj_step(self.model, self.data)
             viewer.sync()
             time.sleep(max(0, param.timeStep-(time.time()-previous_time)))

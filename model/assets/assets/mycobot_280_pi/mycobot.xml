@@ -1,30 +1,6 @@
 <mujoco model="firefighter">
   <compiler angle="radian"/>
 
-  <default>
-    <default class="mycobot" >
-      <geom type="mesh"/>
-      <joint axis="0 0 1" damping="1" armature="0.1"/>
-      <general gaintype="fixed" biastype="affine" gainprm="2000" biasprm="0 -2000 -200"/>
-      <default class="size1">
-        <general forcerange="-20 20"/>
-      </default>
-      <default class="size2">
-        <general forcerange="-18 18"/>
-      </default>
-      <default class="size3">
-        <general forcerange="-15 15"/>
-      </default>
-      <default class="visual">
-        <geom contype="0" conaffinity="0" group="2" material="white"/>
-      </default>
-      <default class="collision">
-        <geom group="3" mass="0" density="0"/>
-      </default>
-      <site size="0.001" rgba="0.5 0.5 0.5 0.3" group="4"/>
-    </default>
-  </default>
-
   <asset>
     <material name="white" rgba="1 1 1 1"/>
     <material name="silver" rgba=".753 .753 .753 1"/>
@@ -44,28 +20,34 @@
       <geom pos="0 0 -0.03" quat="0.707105 0 0 0.707108" type="mesh" mesh="G_base"/>
       <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="joint1"/>
       <geom type="mesh" mesh="joint1"/>
-      <body name="joint2" pos="0 0 0.13956">
-        <joint name="joint2_to_joint1"/>
+
+      <body name="joint2" pos="0 0.005 0.13956">
+        <joint name="joint1" pos="0 0 0" axis="0 0 1" limited="true"  range="0 0.00001" actuatorfrcrange="-1000 1000"/>
         <geom pos="0 0 -0.06096" quat="0.707105 0 0 -0.707108" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="joint2"/>
         <geom pos="0 0 -0.06096" quat="0.707105 0 0 -0.707108" type="mesh" mesh="joint2"/>
+
         <body name="joint3" pos="0 0 -0.001" quat="0.499998 0.500002 0.5 -0.5">
-          <joint name="joint3_to_joint2"/>
+          <joint name="joint2" limited="true"  range="0 0.00001"/>
           <geom pos="0 0 0.03256" quat="0.707105 0 -0.707108 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="joint3"/>
           <geom pos="0 0 0.03256" quat="0.707105 0 -0.707108 0" type="mesh" mesh="joint3"/>
+
           <body name="joint4" pos="-0.1104 0 0">
-            <joint name="joint4_to_joint3"/>
+            <joint name="joint3" limited="true"  range="0 0.00001"/>
             <geom pos="0 0 0.03056" quat="0.707105 0 -0.707108 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="joint4"/>
             <geom pos="0 0 0.03056" quat="0.707105 0 -0.707108 0" type="mesh" mesh="joint4"/>
+
             <body name="joint5" pos="-0.096 0 0.06462" quat="0.707105 0 0 -0.707108">
-              <joint name="joint5_to_joint4"/>
+              <joint name="joint4" limited="true"  range="0 0.00001"/>
               <geom pos="0 0 -0.03356" quat="0.499998 0.500002 -0.5 0.5" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="joint5"/>
               <geom pos="0 0 -0.03356" quat="0.499998 0.500002 -0.5 0.5" type="mesh" mesh="joint5"/>
+
               <body name="joint6" pos="0 -0.07318 0" quat="0.499998 0.5 -0.5 0.500002">
-                <joint name="joint6_to_joint5"/>
+                <joint name="joint5" limited="true"  range="0 0.00001"/>
                 <geom pos="0 0 -0.038" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="joint6"/>
                 <geom pos="0 0 -0.038" type="mesh" mesh="joint6"/>
+
                 <body name="joint6_flange" pos="0 0.0456 0" quat="0.707105 -0.707108 0 0">
-                  <joint name="joint6output_to_joint6"/>
+                  <joint name="joint6" limited="true"  range="0 0.00001"/>
                   <geom pos="0 0 -0.012" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="joint7"/>
                   <geom pos="0 0 -0.012" type="mesh" mesh="joint7"/>
 
@@ -92,12 +74,12 @@
   </worldbody>
 
   <actuator>
-    <general joint="joint2_to_joint1"       ctrllimited="true" class="size1" ctrlrange="-3.14 3.14159" /> 
-    <general joint="joint3_to_joint2"       ctrllimited="true" class="size1" ctrlrange="-3.14 3.14159" />
-    <general joint="joint4_to_joint3"       ctrllimited="true" class="size2" ctrlrange="-3.14 3.14159" />
-    <general joint="joint5_to_joint4"       ctrllimited="true" class="size2" ctrlrange="-3.14 3.14159" />
-    <general joint="joint6_to_joint5"       ctrllimited="true" class="size2" ctrlrange="-3.14 3.14159" />
-    <general joint="joint6output_to_joint6" ctrllimited="true" class="size3" ctrlrange="-3.14 3.14159" />
+    <!-- <general name="joint1" joint="joint1" ctrllimited="true" class="size1" ctrlrange="-3.14 3.14159" /> 
+    <general name="joint2" joint="joint2" ctrllimited="true" class="size1" ctrlrange="-3.14 3.14159" />
+    <general name="joint3" joint="joint3" ctrllimited="true" class="size2" ctrlrange="-3.14 3.14159" />
+    <general name="joint4" joint="joint4" ctrllimited="true" class="size2" ctrlrange="-3.14 3.14159" />
+    <general name="joint5" joint="joint5" ctrllimited="true" class="size2" ctrlrange="-3.14 3.14159" />
+    <general name="joint6" joint="joint6" ctrllimited="true" class="size3" ctrlrange="-3.14 3.14159" /> -->
 
     <position name="gripper_lite_left" joint="gripper_lite_left_joint" ctrllimited="true" ctrlrange="0 0.02" kp="12"/> 
     <position name="gripper_lite_right" joint="gripper_lite_right_joint" ctrllimited="true" ctrlrange="-0.02 0" kp="12"/> 
