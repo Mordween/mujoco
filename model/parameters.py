@@ -35,5 +35,5 @@ autoreset = "disable"   # https://mujoco.readthedocs.io/en/latest/XMLreference.h
 """
 sensor data
 """
-
+store_data = True
 csv_filename = 'sensor_data.csv'

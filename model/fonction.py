@@ -95,9 +95,10 @@ class Simulation():
             self.simStep(viewer)
 
     def simStep(self, viewer):
-        with open(param.csv_filename, mode='a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([self.data.sensordata[0], self.data.sensordata[1], self.data.sensordata[2]])
+        if(param.store_data):
+            with open(param.csv_filename, mode='a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([self.data.sensordata[0], self.data.sensordata[1], self.data.sensordata[2]])
         mujoco.mj_step(self.model, self.data)
         viewer.sync()
         time.sleep(max(0, param.timeStep-(time.time()-param.previous_time)))

@@ -24,7 +24,6 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
     mujoco.mj_step(sim.model, sim.data)
     viewer.sync()
 
-    # previous_time = time.time()
     while viewer.is_running():
         
         match simulation_action :
@@ -136,6 +135,9 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
             
             case 'end' : 
                 print("durée de la simulation", round(time.time()-start), "s")
+
+                # stop data storage
+                param.store_data = False
                 simulation_action = 'default'
 
         sim.simStep(viewer)
