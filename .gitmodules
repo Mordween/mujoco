@@ -1,3 +1,0 @@
-[submodule "model/mujoco_menagerie"]
-	path = model/mujoco_menagerie
-	url = https://github.com/google-deepmind/mujoco_menagerie
