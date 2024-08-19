@@ -19,21 +19,14 @@ def shaftPosDown():
     param.shaftPos += param.up_down_speed
 
 class Simulation():
+    """
+    initialize simulation parameters 
+    """
     def __init__(self, model, robot):
         self.model = model
         self.data = mujoco.MjData(model)
         # self.sim = mujoco.MjSim(model)    # https://github.com/openai/mujoco-py/issues/249
         self.robot = robot
-
-        # print("userdata data : ", dir(self.data.userdata.view))
-        # print("model data : ", dir(self.data.model.camera))
-        # print("model data : ", dir(self.data.model))
-        # print("camera data : ", dir(self.data.camera))
-        # print(self.data.cam_xmat)#('robot_cam'))
-
-        # print("sensor", dir(self.data.sensor))
-
-        print("sensor data : ", dir(self.data.sensordata))
 
         self.model.opt.timestep     = param.timeStep
         self.model.opt.iterations   = param.modelIterations
@@ -46,30 +39,21 @@ class Simulation():
         self.robot.grippers[0].tool = SE3(0, 0, param.gripperSize)
         self.robot.base = SE3(param.robotPosition)*SE3.Rz(pi/2)
 
-        # Ouvre le fichier en mode écriture, ce qui crée ou remplace le fichier s'il existe
+        # open or create .csv file
         with open(param.csv_filename, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['x', 'y', 'z'])
 
-
+    """
+    this function is used to compute and move the end effector of the robot to a desired position
+    """
     def move(self, viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 100):
         positionR = [   position['y'] - self.data.body('link_base').xpos[1],
                      - (position['x'] - self.data.body('link_base').xpos[0]),  
                         position['z'] - self.data.body('link_base').xpos[2]]
         
-        # robot.q = [     self.data.joint('joint1').qpos, self.data.joint('joint2').qpos, 
-        #                 self.data.joint('joint3').qpos, self.data.joint('joint4').qpos, 
-        #                 self.data.joint('joint5').qpos, self.data.joint('joint6').qpos]
-        
-        # Tep = sm.SE3.Trans(positionR[0], positionR[1], positionR[2]) * sm.SE3.OA([1, 0,1], quat)
-        # sol = robot.ik_LM(Tep)         # solve IK
-
-        # qt = rtb.jtraj(robot.q, sol[0], numberOfSteps)
         Tep = sm.SE3(positionR[0], positionR[1], positionR[2]) * sm.SE3.RPY([quat[0]*90, quat[1]*90, quat[2]*90], order="xyz", unit="deg")
-        # Tep = sm.SE3(positionR[0], positionR[1], positionR[2]) * sm.SE3.RPY([0,90,0], order="xyz", unit="deg")
         ctraj = rtb.ctraj(robot.fkine(robot.q), Tep, numberOfSteps)
-        print(ctraj)
-        print(robot.q)
         jtraj = robot.ikine_LM(ctraj, q0 = robot.q)
         param.previous_time = time.time()
 
@@ -77,20 +61,12 @@ class Simulation():
             qpos = q
             robot.q = q
             self.data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], self.data.ctrl[6], self.data.ctrl[7], self.data.ctrl[8], self.data.ctrl[9], self.data.ctrl[10], self.data.ctrl[11]]
-            # self.data.joint('joint1').qpos = qpos[0]
-            # self.data.joint('joint2').qpos = qpos[1]
-            # self.data.joint('joint3').qpos = qpos[2]
-            # self.data.joint('joint4').qpos = qpos[3]
-            # self.data.joint('joint5').qpos = qpos[4]
-            # self.data.joint('joint6').qpos = qpos[5]
 
             self.simStep(viewer)
-            # mujoco.mj_step(self.model, self.data)
-            # viewer.sync()
-            # time.sleep(max(0, param.timeStep-(time.time()-param.previous_time)))
-            # param.previous_time = time.time()
 
-
+    """
+    this function is used to compute and move the crane from a position to another position
+    """
     def crane_move_to(self, viewer, dest, n_sample):
         T_dest = SE3(dest['x'], dest['y'], dest['z'])
         traj = rtb.ctraj(SE3(self.model.body('end_effector').pos), T_dest, n_sample)
@@ -101,26 +77,21 @@ class Simulation():
             beam_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)*SE3.Tz(0.3785) 
             moving_box_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y + param.shaftPos)*SE3.Tz(0.41)
 
-            #move the differents part of the crane
+            # move the differents part of the crane
             self.model.body('crane_body').pos    = [crane_body_pos.x     , crane_body_pos.y  , crane_body_pos.z]
             self.model.body('end_effector').pos  = [end_effector_pos.x   , end_effector_pos.y, end_effector_pos.z]
             self.model.body('beam').pos          = [beam_pos.x           , beam_pos.y        , beam_pos.z]
             self.model.body('moving_box').pos    = [moving_box_pos.x     , moving_box_pos.y  , moving_box_pos.z]       
 
-            # mujoco.mj_step(self.model, self.data)
-            # viewer.sync()
-            # time.sleep(max(0, param.timeStep-(time.time()-param.previous_time)))
-            # param.previous_time = time.time()
             self.simStep(viewer)
 
+    """
+    this function is used to create a downtime without pausing the simulation as with time.sleep()
+    """
     def wait(self, viewer, duration):
         time_pass = time.time() * (1/param.timeStep)
         param.previous_time = time.time()
         while(time.time()*(1/param.timeStep) - time_pass < duration*(1/param.timeStep)):
-            # mujoco.mj_step(self.model, self.data)
-            # viewer.sync()
-            # time.sleep(max(0, param.timeStep-(time.time()-param.previous_time)))
-            # param.previous_time = time.time()
             self.simStep(viewer)
 
     def simStep(self, viewer):
