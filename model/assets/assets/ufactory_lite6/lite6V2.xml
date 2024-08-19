@@ -130,7 +130,7 @@
   </worldbody>
 
   <actuator>
-    <general joint="joint1" ctrllimited="true" class="size1" ctrlrange="-6.28319 6.28319" />  <!-- kp="20" kv="0" -->
+    <general joint="joint1" ctrllimited="true" class="size1" ctrlrange="-6.28319 6.28319" />  
     <general joint="joint2" ctrllimited="true" class="size1" ctrlrange="-2.61799 2.61799" />
     <general joint="joint3" ctrllimited="true" class="size2" ctrlrange="-0.061087 5.23599" />
     <general joint="joint4" ctrllimited="true" class="size2" ctrlrange="-6.28319 6.28319" />
