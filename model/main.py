@@ -24,7 +24,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
     mujoco.mj_step(sim.model, sim.data)
     viewer.sync()
 
-    previous_time = time.time()
+    # previous_time = time.time()
     while viewer.is_running():
         
         match simulation_action :
@@ -149,8 +149,17 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 simulation_action = 'endV2'
 
 
-        mujoco.mj_step(sim.model,sim.data)
-        viewer.sync()
-        time.sleep(max(0, param.timeStep-(time.time()-previous_time)))
-        previous_time = time.time()
+        # mujoco.mj_step(sim.model,sim.data)
+        # viewer.sync()
+
+        sim.simStep(viewer)
+        # print(sim.data.sensordata)
+        # # https://github.com/openai/mujoco-py/issues/249 # #
+        # # a is a tuple if depth is True and a numpy array if depth is False # #
+        # a = sim.sim.render(width=200, height=200, camera_name='robot_cam', depth=True)
+        # rgb_img = a[0]
+        # depth_img = a[1]
+
+        # time.sleep(max(0, param.timeStep-(time.time()-previous_time)))
+        # previous_time = time.time()
         

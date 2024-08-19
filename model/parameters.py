@@ -30,3 +30,10 @@ gripperSize = 0.045
 Not yet release : https://mujoco.readthedocs.io/en/latest/changelog.html
 """
 autoreset = "disable"   # https://mujoco.readthedocs.io/en/latest/XMLreference.html#option-flag-autoreset
+
+
+"""
+sensor data
+"""
+
+csv_filename = 'sensor_data.csv'

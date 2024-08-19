@@ -7,6 +7,8 @@ from spatialmath import SE3
 import spatialmath as sm
 from spatialmath.base import *
 
+import csv
+
 import parameters as param
 
 
@@ -20,7 +22,18 @@ class Simulation():
     def __init__(self, model, robot):
         self.model = model
         self.data = mujoco.MjData(model)
+        # self.sim = mujoco.MjSim(model)    # https://github.com/openai/mujoco-py/issues/249
         self.robot = robot
+
+        # print("userdata data : ", dir(self.data.userdata.view))
+        # print("model data : ", dir(self.data.model.camera))
+        # print("model data : ", dir(self.data.model))
+        # print("camera data : ", dir(self.data.camera))
+        # print(self.data.cam_xmat)#('robot_cam'))
+
+        # print("sensor", dir(self.data.sensor))
+
+        print("sensor data : ", dir(self.data.sensordata))
 
         self.model.opt.timestep     = param.timeStep
         self.model.opt.iterations   = param.modelIterations
@@ -32,6 +45,11 @@ class Simulation():
 
         self.robot.grippers[0].tool = SE3(0, 0, param.gripperSize)
         self.robot.base = SE3(param.robotPosition)*SE3.Rz(pi/2)
+
+        # Ouvre le fichier en mode écriture, ce qui crée ou remplace le fichier s'il existe
+        with open(param.csv_filename, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['x', 'y', 'z'])
 
 
     def move(self, viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 100):
@@ -53,7 +71,7 @@ class Simulation():
         print(ctraj)
         print(robot.q)
         jtraj = robot.ikine_LM(ctraj, q0 = robot.q)
-        previous_time = time.time()
+        param.previous_time = time.time()
 
         for q in jtraj.q:
             qpos = q
@@ -65,16 +83,18 @@ class Simulation():
             # self.data.joint('joint4').qpos = qpos[3]
             # self.data.joint('joint5').qpos = qpos[4]
             # self.data.joint('joint6').qpos = qpos[5]
-            mujoco.mj_step(self.model, self.data)
-            viewer.sync()
-            time.sleep(max(0, param.timeStep-(time.time()-previous_time)))
-            previous_time = time.time()
+
+            self.simStep(viewer)
+            # mujoco.mj_step(self.model, self.data)
+            # viewer.sync()
+            # time.sleep(max(0, param.timeStep-(time.time()-param.previous_time)))
+            # param.previous_time = time.time()
 
 
     def crane_move_to(self, viewer, dest, n_sample):
         T_dest = SE3(dest['x'], dest['y'], dest['z'])
         traj = rtb.ctraj(SE3(self.model.body('end_effector').pos), T_dest, n_sample)
-        previous_time = time.time()
+        param.previous_time = time.time()
         for i in range(n_sample ):
             crane_body_pos = SE3.Tx(traj[i].x)
             end_effector_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)
@@ -87,17 +107,27 @@ class Simulation():
             self.model.body('beam').pos          = [beam_pos.x           , beam_pos.y        , beam_pos.z]
             self.model.body('moving_box').pos    = [moving_box_pos.x     , moving_box_pos.y  , moving_box_pos.z]       
 
-            mujoco.mj_step(self.model, self.data)
-            viewer.sync()
-            time.sleep(max(0, param.timeStep-(time.time()-previous_time)))
-            previous_time = time.time()
+            # mujoco.mj_step(self.model, self.data)
+            # viewer.sync()
+            # time.sleep(max(0, param.timeStep-(time.time()-param.previous_time)))
+            # param.previous_time = time.time()
+            self.simStep(viewer)
 
     def wait(self, viewer, duration):
         time_pass = time.time() * (1/param.timeStep)
-        previous_time = time.time()
+        param.previous_time = time.time()
         while(time.time()*(1/param.timeStep) - time_pass < duration*(1/param.timeStep)):
-            mujoco.mj_step(self.model, self.data)
-            viewer.sync()
-            time.sleep(max(0, param.timeStep-(time.time()-previous_time)))
-            previous_time = time.time()
-()
+            # mujoco.mj_step(self.model, self.data)
+            # viewer.sync()
+            # time.sleep(max(0, param.timeStep-(time.time()-param.previous_time)))
+            # param.previous_time = time.time()
+            self.simStep(viewer)
+
+    def simStep(self, viewer):
+        with open(param.csv_filename, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([self.data.sensordata[0], self.data.sensordata[1], self.data.sensordata[2]])
+        mujoco.mj_step(self.model, self.data)
+        viewer.sync()
+        time.sleep(max(0, param.timeStep-(time.time()-param.previous_time)))
+        param.previous_time = time.time()
