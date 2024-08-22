@@ -22,7 +22,7 @@ modelSolver = 1         # 0 : PGS,  1 : CG, 2 : Newton
 Robot parameter
 """
 robotPosition = [0.4, 0, 0]
-# robotPosition = [0.18, 0, 0]
+# robotPosition = [0.18, 0, 0]          # mycobot is smaller than Lite6, so it should be closer
 robotRotation = [1, 0, 0, 1]
 gripperSize = 0.045
 
