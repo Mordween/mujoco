@@ -37,8 +37,7 @@ sensor data
 """
 store_data = True
 csv_filename = 'sensor_data.csv'
-# Hard to get the camera data : https://github.com/openai/mujoco-py/issues/249 => didn't work
 
 # Define the directory where the images are stored
-image_directory = "cameraPic"  # Use the correct path to your image directory
-captureFrequency = 100          # represent the number of iteration before take picture
+image_directory = "cameraPic"   # Path to your image directory
+captureFrequency = 100          # Number of iterations between each image capture

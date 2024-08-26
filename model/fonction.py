@@ -35,8 +35,6 @@ class Simulation():
         self.model = model
         self.renderer = mujoco.Renderer(model, 480, 640)
         self.data = mujoco.MjData(model)
-        # self.sim = mujoco.MjSim(model)    # https://github.com/openai/mujoco-py/issues/249
-        self.cam1_imgs=[]
 
         self.iteration = 0
         # Get a list of all image files (e.g., .png) in the directory
@@ -123,17 +121,18 @@ class Simulation():
                 writer.writerow([self.data.sensordata[0], self.data.sensordata[1], self.data.sensordata[2]])
             if (self.iteration % param.captureFrequency == 0):
                 self.renderer.update_scene(self.data, camera="robot_cam")
-                cam1_imgs = []
-                cam1_img = self.renderer.render()
-                cam1_imgs.append(cam1_img)
+                cam_imgs = []
+                cam_img = self.renderer.render()
+                cam_imgs.append(cam_img)
 
-                image_arrays = np.array(cam1_imgs)
+                image_arrays = np.array(cam_imgs)
                 image_array = np.squeeze(image_arrays)
                 # Convert the NumPy array to an image
                 image = Image.fromarray(image_array)
 
                 # Save the image to a file
                 image.save(f'{param.image_directory}/image{self.iteration:05d}.png')
+                
         mujoco.mj_step(self.model, self.data)
         viewer.sync()
         time.sleep(max(0, param.timeStep-(time.time()-param.previous_time)))
