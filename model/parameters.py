@@ -38,3 +38,6 @@ sensor data
 store_data = True
 csv_filename = 'sensor_data.csv'
 # Hard to get the camera data : https://github.com/openai/mujoco-py/issues/249 => didn't work
+
+# Define the directory where the images are stored
+image_directory = "cameraPic"  # Use the correct path to your image directory

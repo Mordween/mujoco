@@ -12,6 +12,12 @@ import csv
 import parameters as param
 
 
+from PIL import Image
+import numpy as np
+import os 
+import glob
+
+
 def shaftPosUp(sim):
     param.shaftPos -= param.up_down_speed
     sim.model.body('moving_box').pos[1] = sim.model.body('beam').pos[1] + param.shaftPos
@@ -27,8 +33,20 @@ class Simulation():
     """
     def __init__(self, model, robot):
         self.model = model
+        self.renderer = mujoco.Renderer(model, 480, 640)
         self.data = mujoco.MjData(model)
         # self.sim = mujoco.MjSim(model)    # https://github.com/openai/mujoco-py/issues/249
+        self.cam1_imgs=[]
+
+        self.iteration = 0
+        # Get a list of all image files (e.g., .png) in the directory
+        images = glob.glob(os.path.join(param.image_directory, "*.png"))
+
+        # Loop through the list and delete each image
+        for image in images:
+            os.remove(image)
+
+        # print(dir(mujoco.MjsCamera()))  
         self.robot = robot
 
         self.model.opt.timestep     = param.timeStep
@@ -103,7 +121,21 @@ class Simulation():
             with open(param.csv_filename, mode='a', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow([self.data.sensordata[0], self.data.sensordata[1], self.data.sensordata[2]])
+            if (self.iteration % 100 == 0):
+                self.renderer.update_scene(self.data, camera="robot_cam")
+                cam1_imgs = []
+                cam1_img = self.renderer.render()
+                cam1_imgs.append(cam1_img)
+
+                image_arrays = np.array(cam1_imgs)
+                image_array = np.squeeze(image_arrays)
+                # Convert the NumPy array to an image
+                image = Image.fromarray(image_array)
+
+                # Save the image to a file
+                image.save(f'{param.image_directory}/image{self.iteration:05d}.png')
         mujoco.mj_step(self.model, self.data)
         viewer.sync()
         time.sleep(max(0, param.timeStep-(time.time()-param.previous_time)))
         param.previous_time = time.time()
+        self.iteration +=1
