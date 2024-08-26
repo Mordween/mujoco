@@ -63,7 +63,8 @@ class Simulation():
         for q in jtraj.q:
             qpos = q
             robot.q = q
-            self.data.ctrl = [qpos[0], qpos[1], qpos[2], qpos[3], qpos[4], qpos[5], self.data.ctrl[6], self.data.ctrl[7], self.data.ctrl[8], self.data.ctrl[9], self.data.ctrl[10], self.data.ctrl[11]]
+            self.data.ctrl = [qpos[0]           , qpos[1]           , qpos[2]           , qpos[3]           , qpos[4]           , qpos[5], 
+                              self.data.ctrl[6] , self.data.ctrl[7] , self.data.ctrl[8] , self.data.ctrl[9] , self.data.ctrl[10], self.data.ctrl[11]]
 
             self.simStep(viewer)
 
@@ -92,9 +93,9 @@ class Simulation():
     this function is used to create a downtime without pausing the simulation as with time.sleep()
     """
     def wait(self, viewer, duration):
-        time_pass = time.time() * (1/param.timeStep)
+        time_pass = time.time()
         param.previous_time = time.time()
-        while(time.time()*(1/param.timeStep) - time_pass < duration*(1/param.timeStep)):
+        while(time.time() - time_pass < duration):
             self.simStep(viewer)
 
     def simStep(self, viewer):
