@@ -8,7 +8,7 @@ sim = Simulation(model, robot)
 
 position = {'x': 0.2, 'y': 0.3, 'z': 0.030 } 
 positionShaft = {'x': 0.2, 'y': 0.295, 'z': 0}  # 0.285    # the value is not 0.3 because you have to consider the radius of the shaft
-positionShaft2 = {'x': 0, 'y': 0.09, 'z': 0}
+positionShaft2 = {'x': 0, 'y': 0.085, 'z': 0}   # same
 positionShaft3 = {'x': 0, 'y': 0.18, 'z': 0}
 
 simulation_action = 'init' 
@@ -30,47 +30,65 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
             case 'init' :
                 simulation_action = 'rope_init'
 
+            #-----------------------------------------------------------------------------------------------#
+            #  Position the gripper at the top to move it.
+            #-----------------------------------------------------------------------------------------------#
             case 'rope_init':
                 positionZ = 0.16
                 if (sim.data.body('gripper_rope').xpos[2]< positionZ):
-                    shaftPosUp()
-                    model.body('moving_box').pos[1] = model.body('beam').pos[1] + param.shaftPos
+                    shaftPosUp(sim)
                 else:
                     simulation_action = 'shaftMove'
 
+            #-----------------------------------------------------------------------------------------------#
+            # Move the crane to position it over the brick
+            #-----------------------------------------------------------------------------------------------#
             case 'shaftMove' :
                 sim.crane_move_to(viewer, positionShaft, 1500)
                 sim.wait(viewer, 2)
                 simulation_action = 'down_rope'
 
+            #-----------------------------------------------------------------------------------------------#
+            # Lower the gripper to grab the brick
+            #-----------------------------------------------------------------------------------------------#
             case 'down_rope':
                 positionZ = 0.046
                 if (sim.data.body('gripper_rope').xpos[2]> positionZ):
-                    shaftPosDown()
-                    model.body('moving_box').pos[1] = model.body('beam').pos[1] + param.shaftPos
+                    shaftPosDown(sim)
                 else:
                     simulation_action = 'take_brick'
 
+            #-----------------------------------------------------------------------------------------------#
+            # Take the brick
+            #-----------------------------------------------------------------------------------------------#
             case 'take_brick' :
                 sim.wait(viewer, 2)
                 sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
                                  sim.data.ctrl[6], sim.data.ctrl[7], sim.data.ctrl[8], 0, 0.032, -0.032]
                 sim.wait(viewer, 1)
                 simulation_action = 'up_rope'
-            
+
+            #-----------------------------------------------------------------------------------------------#
+            # Position the gripper at the top to move it. 
+            #-----------------------------------------------------------------------------------------------#
             case "up_rope":
                 positionZ = 0.15
                 if (sim.data.body('gripper_rope').xpos[2]< positionZ):
-                    shaftPosUp()
-                    model.body('moving_box').pos[1] = model.body('beam').pos[1] + param.shaftPos
+                    shaftPosUp(sim)
                 else:
                     simulation_action = 'shaft_rebase'
 
+            #-----------------------------------------------------------------------------------------------#
+            # Move the crane to position it over the wall
+            #-----------------------------------------------------------------------------------------------#
             case 'shaft_rebase':
                 sim.crane_move_to(viewer, positionShaft2, 1500)
                 sim.wait(viewer, 2)
                 simulation_action = 'move_robot'
             
+            #-----------------------------------------------------------------------------------------------#
+            # Move the robot to pick up the brick
+            #-----------------------------------------------------------------------------------------------#
             case 'move_robot':
                 sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
                                  0.001, -0.001, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
@@ -107,32 +125,52 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 else :
                     simulation_action = 'lite_take'
 
-            case "turn_end_effector":
-                
-                sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], 0.92,
-                                 0.0045, -0.0045, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
-                simulation_action = 'move_robot'
-                sim.wait(viewer, 2)
-
+            #-----------------------------------------------------------------------------------------------#
+            # Close the gripper clamps to grip the brick
+            #-----------------------------------------------------------------------------------------------#
             case "lite_take" :
                 sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
                                  0.01, -0.01, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
                 sim.wait(viewer, 2)
-                simulation_action = 'release_brick'
-                sim.wait(viewer, 1)
-                                   
+                simulation_action = 'place_brick'
+
+            #-----------------------------------------------------------------------------------------------#
+            # !! Function under construction !!
+            # Move the brick with the gripper and robot
+            #-----------------------------------------------------------------------------------------------#
+            case 'place_brick':
+                quat = [0, 1, 0]
+                positionZ = 0.078
+                if(sim.data.body('brick').xpos[2]> positionZ):    # 0.6+0.3/2 + little offset
+                    positionD = {'x': 0,     # how to put end effector position??
+                                 'y': 0.1, 
+                                 'z': sim.data.body('brick').xpos[2]+0.005-param.up_down_speed}
+                    shaftPosDown(sim)
+                    sim.move(viewer, sim.robot, positionD, quat, numberOfSteps=2)
+    
+                else :
+                    simulation_action = 'release_brick'
+
+            #-----------------------------------------------------------------------------------------------#
+            # Release the brck after it has been properly positioned 
+            #-----------------------------------------------------------------------------------------------#                     
             case "release_brick" :
                 sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
                                  sim.data.ctrl[6], sim.data.ctrl[7], sim.data.ctrl[8], sim.data.ctrl[9], 0, 0]
-                simulation_action = 'robot_move'
+                simulation_action = 'crane_away'
 
-            case 'robot_move':
+            #-----------------------------------------------------------------------------------------------#
+            # Moves the crane away
+            #-----------------------------------------------------------------------------------------------#
+            case 'crane_away':
                 sim.wait(viewer, 2)
                 sim.crane_move_to(viewer, positionShaft3, 1500)
                 sim.wait(viewer, 2)
-
                 simulation_action = 'end'
             
+            #-----------------------------------------------------------------------------------------------#
+            # we stop data storage and print the simulation duration
+            #-----------------------------------------------------------------------------------------------#
             case 'end' : 
                 print("durée de la simulation", round(time.time()-start), "s")
 
@@ -140,5 +178,6 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 param.store_data = False
                 simulation_action = 'default'
 
+        # Advance the simulation by one step after performing an action.
         sim.simStep(viewer)
         

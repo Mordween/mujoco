@@ -39,7 +39,7 @@ For MyCobot, we needed to convert the URDF file to XML (MJCF). This was accompli
 
 ```
 cd bin
-./compile [path to your file] [path where to place the file]
+./compile [path to your file] [file path]
 ```
 
 ## Implementing a Rope in MuJoCo

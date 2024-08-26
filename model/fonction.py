@@ -12,11 +12,14 @@ import csv
 import parameters as param
 
 
-def shaftPosUp():
+def shaftPosUp(sim):
     param.shaftPos -= param.up_down_speed
+    sim.model.body('moving_box').pos[1] = sim.model.body('beam').pos[1] + param.shaftPos
 
-def shaftPosDown():
+def shaftPosDown(sim):
     param.shaftPos += param.up_down_speed
+    sim.model.body('moving_box').pos[1] = sim.model.body('beam').pos[1] + param.shaftPos
+
 
 class Simulation():
     """

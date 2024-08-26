@@ -37,3 +37,4 @@ sensor data
 """
 store_data = True
 csv_filename = 'sensor_data.csv'
+# Hard to get the camera data : https://github.com/openai/mujoco-py/issues/249 => didn't work
