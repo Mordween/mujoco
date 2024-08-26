@@ -41,3 +41,4 @@ csv_filename = 'sensor_data.csv'
 
 # Define the directory where the images are stored
 image_directory = "cameraPic"  # Use the correct path to your image directory
+captureFrequency = 100          # represent the number of iteration before take picture

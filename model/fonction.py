@@ -121,7 +121,7 @@ class Simulation():
             with open(param.csv_filename, mode='a', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow([self.data.sensordata[0], self.data.sensordata[1], self.data.sensordata[2]])
-            if (self.iteration % 100 == 0):
+            if (self.iteration % param.captureFrequency == 0):
                 self.renderer.update_scene(self.data, camera="robot_cam")
                 cam1_imgs = []
                 cam1_img = self.renderer.render()
