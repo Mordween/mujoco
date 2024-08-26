@@ -57,9 +57,11 @@ In the end, we opted to use the rope object. Although we do not wrap it around a
 ## Solver Options in MuJoCo
 MuJoCo offers three different solvers: Newton, GC, and PGS.
 
-Newton Solver: The main advantage of the Newton solver is its fast convergence (2-3 iterations are typically sufficient). However, from personal observation, it seems to have some issues with physics, particularly with object collisions.
+**Newton Solver:** The main advantage of the Newton solver is its fast convergence (2-3 iterations are typically sufficient). However, from personal observation, it seems to have some issues with physics, particularly with object collisions.
 
-GC Solver: We are currently using the GC solver with 1000 iterations.
+**GC Solver:** We are currently using the GC solver with 1000 iterations.
+
+**PGS:** No significant difference with GC solver.
 
 ## Achieving Real-Time Performance in the Simulator
 To create an effective simulator, real-time performance is essential, meaning one second in the real world should correspond to one second in the simulator. Achieving this requires real-time processing.
