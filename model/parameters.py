@@ -1,6 +1,5 @@
 xml_path = 'main.xml'
 
-
 """
 Simulation parameters
 """
@@ -8,6 +7,7 @@ shaftPos = 0.015
 timeStep = 0.002  # 1e-3
 up_down_speed = 0.0002
 previous_time = 0
+
 
 """
 Simulator parameters
@@ -26,6 +26,7 @@ robotPosition = [0.4, 0, 0]
 robotRotation = [1, 0, 0, 1]
 gripperSize = 0.045
 
+
 """
 Not yet release : https://mujoco.readthedocs.io/en/latest/changelog.html
 """
@@ -40,7 +41,7 @@ store_data = True
 # File where IMU data are stored
 csv_filename = 'sensor_data.csv'
 
-# Path to your image directory
+# Path to robot image directory
 image_directory = "cameraPic" 
 
 # Number of iterations between each image capture

@@ -22,8 +22,8 @@ We tested the code only on Ubuntu 20.04 and windows 10
 
 ## Robot selection 
 
-Uncomment / Comment line 4/5 in ```main.xml  ``` <br>
-Uncomment / Comment line 4/5 in ```main.py  ```<br>
+Uncomment / Comment line 4/5 in ```main.xml``` <br>
+Uncomment / Comment line 4/5 in ```main.py```<br>
 Uncomment / Comment line 24/25 in ```parameters.py``` for the robot's position.
 
 <br>

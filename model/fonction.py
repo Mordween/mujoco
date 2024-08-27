@@ -46,10 +46,8 @@ class Simulation():
         self.model.body('link_base').pos    = param.robotPosition
         self.model.body('link_base').quat   = param.robotRotation
 
-
         self.robot.grippers[0].tool = SE3(0, 0, param.gripperSize)
         self.robot.base = SE3(param.robotPosition)*SE3.Rz(pi/2)
-
 
 
         """
@@ -60,7 +58,7 @@ class Simulation():
         # Check if the folder exists, if not, create it
         if not os.path.exists(param.image_directory):
             os.makedirs(param.image_directory)
-            
+
         # Get a list of all .png files in the directory
         images = glob.glob(os.path.join(param.image_directory, "*.png"))
 
@@ -77,6 +75,8 @@ class Simulation():
     this function is used to compute and move the end effector of the robot to a desired position
     """
     def move(self, viewer, robot, position, quat = [0, 0, -1], numberOfSteps = 100):
+
+        # Relative position of the robot's end effector
         positionR = [   position['y'] - self.data.body('link_base').xpos[1],
                      - (position['x'] - self.data.body('link_base').xpos[0]),  
                         position['z'] - self.data.body('link_base').xpos[2]]
@@ -104,8 +104,8 @@ class Simulation():
         for i in range(n_sample ):
             crane_body_pos = SE3.Tx(traj[i].x)
             end_effector_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)
-            beam_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)*SE3.Tz(0.3785) 
-            moving_box_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y + param.shaftPos)*SE3.Tz(0.41)
+            beam_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y)*SE3.Tz(0.3785)   # 0.3785 corresponds to shaft position Z
+            moving_box_pos = SE3.Tx(traj[i].x)*SE3.Ty(traj[i].y + param.shaftPos)*SE3.Tz(0.41)  # 0.41 corresponds to the Z position of the shaft+ a little more than the shaft radius
 
             # move the differents part of the crane
             self.model.body('crane_body').pos    = [crane_body_pos.x     , crane_body_pos.y  , crane_body_pos.z]
