@@ -94,7 +94,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                                  0.001, -0.001, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
                 quat = [0, 1, 0]
 
-                param.captureFrequency = 5
+                param.captureFrequency = 3
                 position = {'x':sim.data.body('brick').xpos[0], 
                             'y':sim.data.body('brick').xpos[1]-0.15, 
                             'z':sim.data.body('brick').xpos[2]+0.15} 
@@ -124,8 +124,8 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                     sim.wait(viewer, 0.1)
                     i += 1
                 else :
+                    sim.wait(viewer, 4)
                     param.captureFrequency = 100
-                    sim.wait(viewer, 2)
                     simulation_action = 'lite_take'
 
             #-----------------------------------------------------------------------------------------------#
