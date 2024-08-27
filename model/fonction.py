@@ -7,11 +7,12 @@ from spatialmath import SE3
 import spatialmath as sm
 from spatialmath.base import *
 
-import csv
-
 import parameters as param
 
-
+"""
+Libraries used for storing and managing sensor data 
+"""
+import csv
 from PIL import Image
 import numpy as np
 import os 
@@ -36,15 +37,6 @@ class Simulation():
         self.renderer = mujoco.Renderer(model, 480, 640)
         self.data = mujoco.MjData(model)
 
-        self.iteration = 0
-        # Get a list of all image files (e.g., .png) in the directory
-        images = glob.glob(os.path.join(param.image_directory, "*.png"))
-
-        # Loop through the list and delete each image
-        for image in images:
-            os.remove(image)
-
-        # print(dir(mujoco.MjsCamera()))  
         self.robot = robot
 
         self.model.opt.timestep     = param.timeStep
@@ -58,7 +50,20 @@ class Simulation():
         self.robot.grippers[0].tool = SE3(0, 0, param.gripperSize)
         self.robot.base = SE3(param.robotPosition)*SE3.Rz(pi/2)
 
-        # open or create .csv file
+
+
+        """
+        Initialization of the data storage section
+        """
+        self.iteration = 0
+        # Get a list of all .png files in the directory
+        images = glob.glob(os.path.join(param.image_directory, "*.png"))
+
+        # Loop through the list and delete each image
+        for image in images:
+            os.remove(image)
+ 
+        # create .csv file or empty an existing one
         with open(param.csv_filename, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['x', 'y', 'z'])
@@ -114,8 +119,12 @@ class Simulation():
         while(time.time() - time_pass < duration):
             self.simStep(viewer)
 
+    """
+    this function advances the simulation by one step, updating all dynamics and states and storing data
+    """
     def simStep(self, viewer):
         if(param.store_data):
+            # Append sensor data to the CSV file (opens the file in append mode)
             with open(param.csv_filename, mode='a', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow([self.data.sensordata[0], self.data.sensordata[1], self.data.sensordata[2]])
@@ -124,8 +133,9 @@ class Simulation():
                 cam_imgs = []
                 cam_img = self.renderer.render()
                 cam_imgs.append(cam_img)
-
                 image_arrays = np.array(cam_imgs)
+
+                # reshape from (1, 1, 640, 3) to (640, 3)
                 image_array = np.squeeze(image_arrays)
                 # Convert the NumPy array to an image
                 image = Image.fromarray(image_array)

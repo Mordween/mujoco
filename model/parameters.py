@@ -36,8 +36,12 @@ autoreset = "disable"   # https://mujoco.readthedocs.io/en/latest/XMLreference.h
 sensor data
 """
 store_data = True
+
+# File where IMU data are stored
 csv_filename = 'sensor_data.csv'
 
-# Define the directory where the images are stored
-image_directory = "cameraPic"   # Path to your image directory
-captureFrequency = 100          # Number of iterations between each image capture
+# Path to your image directory
+image_directory = "cameraPic" 
+
+# Number of iterations between each image capture
+captureFrequency = 100          
