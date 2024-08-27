@@ -55,13 +55,13 @@ It cannot be wrapped around a mesh more than once. (in our case)
 In the end, we opted to use the rope object. Although we do not wrap it around anything, we simply pull it over the pulley to raise or lower it.
 
 ## Solver Options in MuJoCo
-MuJoCo offers three different solvers: Newton, GC, and PGS.
+MuJoCo offers three different solvers: Newton, CG, and PGS.
 
 **Newton Solver:** The main advantage of the Newton solver is its fast convergence (2-3 iterations are typically sufficient). However, from personal observation, it seems to have some issues with physics, particularly with object collisions.
 
 **CG Solver:** We are currently using the CG solver with 1000 iterations. This is the solver that takes up the least CPU capacity.
 
-**PGS Solver:** No significant difference with GC solver.
+**PGS Solver:** No significant difference with CG solver.
 
 ## Achieving Real-Time Performance in the Simulator
 To create an effective simulator, real-time performance is essential, meaning one second in the real world should correspond to one second in the simulator. Achieving this requires real-time processing.
