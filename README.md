@@ -59,7 +59,7 @@ MuJoCo offers three different solvers: Newton, GC, and PGS.
 
 **Newton Solver:** The main advantage of the Newton solver is its fast convergence (2-3 iterations are typically sufficient). However, from personal observation, it seems to have some issues with physics, particularly with object collisions.
 
-**CG Solver:** We are currently using the GC solver with 1000 iterations. This is the solver that takes up the least CPU capacity.
+**CG Solver:** We are currently using the CG solver with 1000 iterations. This is the solver that takes up the least CPU capacity.
 
 **PGS Solver:** No significant difference with GC solver.
 
