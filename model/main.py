@@ -15,6 +15,8 @@ simulation_action = 'init'
 
 with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
     start = time.time()
+    
+    # Position and rotation of the main camera
     viewer.cam.trackbodyid = 15
     viewer.cam.distance = 1.5
     viewer.cam.lookat = [0, 0, 0]

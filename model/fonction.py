@@ -56,6 +56,11 @@ class Simulation():
         Initialization of the data storage section
         """
         self.iteration = 0
+
+        # Check if the folder exists, if not, create it
+        if not os.path.exists(param.image_directory):
+            os.makedirs(param.image_directory)
+            
         # Get a list of all .png files in the directory
         images = glob.glob(os.path.join(param.image_directory, "*.png"))
 
