@@ -145,9 +145,9 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
             #-----------------------------------------------------------------------------------------------#
             case 'place_brick':
                 quat = [0, 1, 0]
-                positionZ = 0.078
-                if(sim.data.body('brick').xpos[2]> positionZ):    # 0.6+0.3/2 + little offset
-                    positionD = {'x': 0,     # how to put end effector position??
+                positionZ = 0.078                               # 0.6+0.3/2 + little offset
+                if(sim.data.body('brick').xpos[2]> positionZ):  # brick wall height + half brick height   
+                    positionD = {'x': 0,                        # how to put end effector position??
                                  'y': 0.1, 
                                  'z': sim.data.body('brick').xpos[2]+0.005-param.up_down_speed}
                     shaftPosDown(sim)
@@ -174,7 +174,7 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 simulation_action = 'end'
             
             #-----------------------------------------------------------------------------------------------#
-            # we stop data storage and print the simulation duration
+            # Stop data storage and print the simulation duration
             #-----------------------------------------------------------------------------------------------#
             case 'end' : 
                 print("durée de la simulation", round(time.time()-start), "s")
