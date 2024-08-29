@@ -22,9 +22,11 @@ We tested the code only on Ubuntu 20.04 and windows 10
 
 ## Robot selection 
 
-Uncomment / Comment line 4/5 in ```main.xml``` <br>
-Uncomment / Comment line 4/5 in ```main.py```<br>
-Uncomment / Comment line 24/25 in ```parameters.py``` for the robot's position.
+Give the `robot` variable the name of the selected robot in the `model/config.json` file
+
+`mycobot` for the **mycobot**  robot of Elephant Robotics
+
+`lite6` for the **lite6** robot of ufactory 
 
 <br>
 

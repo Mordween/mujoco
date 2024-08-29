@@ -1,8 +1,13 @@
 from fonction import *
 
 model = mujoco.MjModel.from_xml_path(param.xml_path)
-robot = rtb.models.Lite6()
-# robot = rtb.models.mycobot280()
+
+# Use the robot name to load the corresponding python librairie file
+if param.robot == "lite6":
+    robot = rtb.models.Lite6()
+elif param.robot == "mycobot":
+    robot = rtb.models.mycobot280()
+
 
 sim = Simulation(model, robot)
 
