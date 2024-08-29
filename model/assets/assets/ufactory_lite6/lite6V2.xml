@@ -48,8 +48,8 @@
     <mesh name="link6_c"      file="assets/ufactory_lite6/assets/collision/link6.stl"/>
     <mesh name="gripper_c"    file="assets/ufactory_lite6/assets/collision/gripper_without_head.stl"/>
 
-    <mesh name="grab_left"    scale="1 1 2" file="grab1_left.stl"/>
-    <mesh name="grab_right"   scale="1 1 2" file="grab1_right.stl"/>
+    <!-- <mesh name="grab_left"    scale="1 1 2" file="grab1_left.stl"/>
+    <mesh name="grab_right"   scale="1 1 2" file="grab1_right.stl"/> -->
   </asset>
 
   <worldbody>
