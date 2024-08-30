@@ -142,7 +142,8 @@ with mujoco.viewer.launch_passive(sim.model, sim.data) as viewer:
                 sim.data.ctrl = [sim.data.ctrl[0], sim.data.ctrl[1], sim.data.ctrl[2], sim.data.ctrl[3], sim.data.ctrl[4], sim.data.ctrl[5],
                                  0.01, -0.01, sim.data.ctrl[8], sim.data.ctrl[9], sim.data.ctrl[10], sim.data.ctrl[11]]
                 sim.wait(viewer, 2)
-                simulation_action = 'place_brick'
+                # simulation_action = 'place_brick'
+                simulation_action = 'release_brick'
 
             #-----------------------------------------------------------------------------------------------#
             # !! Function under construction !!

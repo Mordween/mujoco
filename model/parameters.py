@@ -1,4 +1,3 @@
-import json 
 
 xml_path = 'main.xml'
 
@@ -23,12 +22,7 @@ modelSolver = 1         # 0 : PGS,  1 : CG, 2 : Newton
 """
 Robot parameter
 """
-# Load the config file
-with open('config.json') as config_file:
-    config = json.load(config_file)
-
-robot = config["robot"]
-
+robot = "lite6"  # lite6 / mycobot 
 # Use the robot name to give the corresponding position and include the right xml file
 # Read the XML file
 if robot == "lite6":

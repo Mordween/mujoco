@@ -22,7 +22,7 @@ We tested the code only on Ubuntu 20.04 and windows 10
 
 ## Robot selection 
 
-Give the `robot` variable the name of the selected robot in the `model/config.json` file
+Give the `robot` variable the name of the selected robot in the `model/parameters.py` (line 25) file
 
 `mycobot` for the **mycobot**  robot of Elephant Robotics
 
